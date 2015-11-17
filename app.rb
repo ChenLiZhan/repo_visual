@@ -136,7 +136,11 @@ class VizApp < Sinatra::Base
       data
     end
   end
-  
+
+  get '/' do
+    erb :index
+  end
+
   get '/rubygems' do
     @version_downloads = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads')
     @version_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days')
