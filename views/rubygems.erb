@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualization</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <!-- <script src="//www.google.com/jsapi"></script> -->
+  <script src="highcharts.js"></script>
+  <script src="drilldown.js"></script>
+  <script src="chartkick.js"></script>
+  <script src="rubygems.js"></script>
+</head>
+<script>
+  var version_downloads_stack = <%= @version_downloads_stack.to_json %>
+  $(function () {
+    $('#container').highcharts({
+      chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Version Downloads(drilldown)'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Downloads'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+        },
+        series: [{
+          name: 'Versions',
+          colorByPoint: true,
+          data: version_downloads_stack[0]
+        }],
+        drilldown: {
+          series: version_downloads_stack[1]
+        }
+    });
+  });
+</script>
+<body>
+  <%= line_chart @doc['version_downloads_days'].map{|version|
+      {name: version['number'], data: version['downloads_date']}
+    }, id: "version-downloads-days", discrete: true, height: "600px", library:{title: {text: 'Version Downloads Trend'}, xAxis: {title: {text: 'Date'}}, yAxis: {title: {text: 'Downloads'}}} %>
+
+  <hr>
+
+  <%= column_chart @version_downloads, library: {title: {text: 'Version Downloads'}, xAxis: {title: {text: 'Versions'}}, yAxis: {title: {text: 'Downloads'}}} %>
+  
+  <hr>
+  
+  <div id="container"></div>
+
+</body>
+</html>

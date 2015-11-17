@@ -7,19 +7,10 @@
   <!-- <script src="//www.google.com/jsapi"></script> -->
   <script src="highcharts.js"></script>
   <script src="chartkick.js"></script>
-  <script src="scripts.js"></script>
+  <script src="heatmap.js"></script>
+ 
 </head>
 <body>
-  <%= line_chart @doc['version_downloads_days'].map{|version|
-      {name: version['number'], data: version['downloads_date']}
-    }, id: "version-downloads-days", discrete: true, height: "600px", library:{title: {text: 'Version Downloads Trend'}, xAxis: {title: {text: 'Date'}}, yAxis: {title: {text: 'Downloads'}}} %>
-
-  <hr>
-
-  <%= column_chart @version_downloads, library: {title: {text: 'Version Downloads'}, xAxis: {title: {text: 'Versions'}}, yAxis: {title: {text: 'Downloads'}}} %>
-
-  <hr>
-
   <%= column_chart @commit_week_day, library: {title: {text: 'Commit in days of week'}, xAxis: {title: {text: 'Days of Week'}}, yAxis: {title: {text: 'Commits'}}} %>
 
   <hr>
@@ -37,5 +28,9 @@
             }
     }
   } %>
+
+  <hr>
+
+  <div id="container"></div>
 </body>
 </html>
