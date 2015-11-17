@@ -87,6 +87,19 @@ class VizApp < Sinatra::Base
       commit_week_day
     end
 
+    def version_downloads_days(data)
+      version_downloads_days = []
+      data.each do |row|
+        process = row['downloads_date'].map do |data|
+          date = data[0].split('-')
+          [Date.new(date[0].to_i, date[1].to_i, date[2].to_i).to_time.to_i * 1000, data[1]]
+        end
+        version_downloads_days << {'name' => row['number'], 'data' => process}
+      end
+
+      version_downloads_days
+    end
+
     # def commit_heatmap(data)
     #   # cwday
     #   # month
@@ -126,6 +139,7 @@ class VizApp < Sinatra::Base
   
   get '/rubygems' do
     @version_downloads = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads')
+    @version_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days')
     @version_downloads_stack = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_stack')
     erb :rubygems
   end
@@ -135,6 +149,12 @@ class VizApp < Sinatra::Base
     @commit_week_day = HTTParty.get('http://localhost:4567/api/v1/github/commit_week_day')
     @commits_month_day = HTTParty.get('http://localhost:4567/api/v1/github/commits_month_day')
     erb :github
+  end
+
+  get '/api/v1/rubygems/version_downloads_days' do
+    content_type :json
+    version_downloads_days = version_downloads_days(@doc['version_downloads_days'])
+    version_downloads_days.to_json
   end
 
   get '/api/v1/rubygems/version_downloads' do

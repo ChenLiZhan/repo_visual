@@ -8,7 +8,163 @@
   <script src="highcharts.js"></script>
   <script src="chartkick.js"></script>
   <script src="heatmap.js"></script>
- 
+  <script>
+  // var commits_month_day = <%= @commits_month_day.to_json %>
+  // console.log(commits_month_day);
+  // $(function() {
+  //     (function(H) {
+  //         var Series = H.Series,
+  //             each = H.each,
+  //             wrap = H.wrap,
+  //             seriesTypes = H.seriesTypes;
+
+  //         /**
+  //          * Create a hidden canvas to draw the graph on. The contents is later copied over 
+  //          * to an SVG image element.
+  //          */
+  //         Series.prototype.getContext = function() {
+  //             if (!this.canvas) {
+  //                 this.canvas = document.createElement('canvas');
+  //                 this.canvas.setAttribute('width', this.chart.chartWidth);
+  //                 this.canvas.setAttribute('height', this.chart.chartHeight);
+  //                 this.image = this.chart.renderer.image('', 0, 0, this.chart.chartWidth, this.chart.chartHeight).add(this.group);
+  //                 this.ctx = this.canvas.getContext('2d');
+  //             }
+  //             return this.ctx;
+  //         };
+
+  //         /** 
+  //          * Draw the canvas image inside an SVG image
+  //          */
+  //         Series.prototype.canvasToSVG = function() {
+  //             this.image.attr({
+  //                 href: this.canvas.toDataURL('image/png')
+  //             });
+  //         };
+
+  //         /**
+  //          * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
+  //          * that requires one shape each point.
+  //          */
+  //         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function(proceed) {
+
+  //             var ctx = this.getContext();
+
+  //             if (ctx) {
+
+  //                 // draw the columns
+  //                 each(this.points, function(point) {
+  //                     var plotY = point.plotY,
+  //                         shapeArgs;
+
+  //                     if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+  //                         shapeArgs = point.shapeArgs;
+
+  //                         ctx.fillStyle = point.pointAttr[''].fill;
+  //                         ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+  //                     }
+  //                 });
+
+  //                 this.canvasToSVG();
+
+  //             } else {
+  //                 this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
+
+  //                 // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
+  //                 // charts with more than a few thousand points.
+  //                 //proceed.call(this);
+  //             }
+  //         });
+  //         H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
+  //     }(Highcharts));
+
+
+  //     var start;
+  //     $('#container').highcharts({
+  //         chart: {
+  //             type: 'heatmap',
+  //             margin: [60, 10, 80, 50]
+  //         },
+  //         data: {
+  //             csv: document.getElementById('csv').innerHTML,
+  //             parsed: function () {
+  //                 start = +new Date();
+  //             }
+  //         },
+  //         title: {
+  //             text: 'commits: Month x Day',
+  //             align: 'left',
+  //             x: 40
+  //         },
+
+  //         subtitle: {
+  //             text: 'Temperature variation by day and hour through 2013',
+  //             align: 'left',
+  //             x: 40
+  //         },
+
+  //         xAxis: {
+  //             type: 'datetime',
+  //             labels: {
+  //               align: 'left',
+  //               x: 5,
+  //               y: 14,
+  //               format: '{value:%B}' // long month
+  //             },
+  //             showLastLabel: false,
+  //             tickLength: 16
+  //         },
+
+  //         yAxis: {
+  //           title: {
+  //               text: null
+  //           },
+  //           labels: {
+  //               format: '{value}'
+  //           },
+  //           minPadding: 0,
+  //           maxPadding: 0,
+  //           startOnTick: false,
+  //           endOnTick: false,
+  //           tickPositions: [0, 3, 6],
+  //           tickWidth: 1,
+  //           min: 0,
+  //           max: 6,
+  //           reversed: true
+  //         },
+
+  //         colorAxis: {
+  //             stops: [
+  //                 [0, '#eee'],
+  //                 [0.2, '#d6e685'],
+  //                 [0.5, '#8cc665'],
+  //                 [0.7, '#44a340'],
+  //                 [1, '#1e6823']
+  //             ],
+  //             min: 0,
+  //             max: commits_month_day.max,
+  //             startOnTick: false,
+  //             endOnTick: false,
+  //             labels: {
+  //                 format: '{value}'
+  //             }
+  //         },
+
+  //         series: [{
+  //             borderWidth: 0,
+  //             nullColor: '#EFEFEF',
+  //             colsize: 24 * 36e5, // one day
+  //             tooltip: {
+  //                 headerFormat: 'Commits<br/>',
+  //                 pointFormat: '{point.x:%e %b, %Y} {point.y}: <b>{point.value}</b>'
+  //             },
+  //         }]
+
+  //     });
+  //     console.log('Rendered in ' + (new Date() - start) + ' ms');
+
+  // });
+  </script>
 </head>
 <body>
   <%= column_chart @commit_week_day, library: {title: {text: 'Commit in days of week'}, xAxis: {title: {text: 'Days of Week'}}, yAxis: {title: {text: 'Commits'}}} %>
@@ -32,5 +188,9 @@
   <hr>
 
   <div id="container"></div>
+
+  <pre id="csv" style="display: none;">
+    <%= @commits_month_day['data'] %>
+  </pre>
 </body>
 </html>
