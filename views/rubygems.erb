@@ -15,7 +15,7 @@
   var version_downloads_stack = <%= @version_downloads_stack.to_json %>
   var version_downloads_days = <%= @version_downloads_days.to_json %>
   $(function () {
-    $('#container').highcharts({
+    $('#drilldown').highcharts({
       chart: {
             type: 'column'
         },
@@ -89,7 +89,7 @@
   });
 </script>
 <body>
-  <%= line_chart @doc['version_downloads_days'].map{|version|
+  <%= line_chart @process_downloads_days.map{|version|
       {name: version['number'], data: version['downloads_date']}
     }, id: "version-downloads-days", discrete: true, height: "600px", library:{title: {text: 'Version Downloads Trend'}, xAxis: {title: {text: 'Date'}}, yAxis: {title: {text: 'Downloads'}}} %>
 
@@ -99,7 +99,7 @@
   
   <hr>
   
-  <div id="container"></div>
+  <div id="drilldown"></div>
   <div id="stockline"></div>
 </body>
 </html>

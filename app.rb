@@ -142,6 +142,7 @@ class VizApp < Sinatra::Base
   end
 
   get '/rubygems' do
+    @process_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days_process')
     @version_downloads = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads')
     @version_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days')
     @version_downloads_stack = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_stack')
@@ -159,6 +160,25 @@ class VizApp < Sinatra::Base
     content_type :json
     version_downloads_days = version_downloads_days(@doc['version_downloads_days'])
     version_downloads_days.to_json
+  end
+
+  get '/api/v1/rubygems/version_downloads_days_process' do
+      content_type :json
+
+      version_downloads_days_process = @doc['version_downloads_days'].map do |version|
+        dates = {}
+        @doc['version_downloads_days'].each do |version|
+          version['downloads_date'].each do |value|
+            dates[value[0]] = 0
+          end
+        end
+        version['downloads_date'].each do |date, count|
+          dates[date] = count 
+        end
+        {'number' => version['number'], 'downloads_date' => dates}
+      end
+
+      version_downloads_days_process.to_json
   end
 
   get '/api/v1/rubygems/version_downloads' do
