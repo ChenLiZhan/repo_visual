@@ -30,10 +30,9 @@ class VizApp < Sinatra::Base
       general_data = []
       data.each do |row|
         if general_data[row['number'].split('.').first.to_i].nil?
-          general_data[row['number'].split('.').first.to_i] = row['downloads']
-        else
-          general_data[row['number'].split('.').first.to_i] += row['downloads']
+          general_data[row['number'].split('.').first.to_i] = 0
         end
+        general_data[row['number'].split('.').first.to_i] += row['downloads']
       end
 
       final_general = general_data.each_with_index.map do |row, index|
@@ -48,9 +47,8 @@ class VizApp < Sinatra::Base
       data.each do |row|
         if specific_data[row['number'].split('.').first.to_i].nil?
           specific_data[row['number'].split('.').first.to_i] = []
-        else
-          specific_data[row['number'].split('.').first.to_i] << [row['number'], row['downloads']]
         end
+        specific_data[row['number'].split('.').first.to_i] << [row['number'], row['downloads']]
       end
 
       final_specific = specific_data.each_with_index.map do |row, index|
@@ -62,6 +60,89 @@ class VizApp < Sinatra::Base
       end
 
       [final_general, final_specific]
+    end
+
+    def version_downloads_nest(data)
+      major_data = []
+      data.each do |row|
+        if major_data[row['number'].split('.').first.to_i].nil?
+          major_data[row['number'].split('.').first.to_i] = 0
+        end
+        major_data[row['number'].split('.').first.to_i] += row['downloads']
+      end
+
+      major = major_data.each_with_index.map do |row, index|
+        {
+          'name'    => "Version #{index}.*",
+          'y'       => row,
+          'drilldown' => "Version #{index}.*"
+        }
+      end
+
+      minor_data = []
+      data.each do |row|
+        if minor_data[row['number'].split('.').first.to_i].nil?
+          minor_data[row['number'].split('.').first.to_i] = []
+        end
+        minor_data[row['number'].split('.').first.to_i] << [row['number'], row['downloads']]
+      end
+
+      minor_hash = Hash.new(0)
+      minor_data.each do |row|
+        row.each do |version|
+          maj, min, pat = version[0].split('.')
+          if minor_hash["Version #{maj}.#{min}.*"].nil?
+            minor_hash["Version #{maj}.#{min}.*"] = 0
+          end
+          minor_hash["Version #{maj}.#{min}.*"] += version[1]
+        end
+      end
+
+      m_data = {}
+      minor_hash.each do |index, value|
+        major_ver = index.match(/[0-9]/)
+        minor_ver = index.match(/[0-9].[0-9]/)
+        
+        if m_data[major_ver.to_s].nil?
+          m_data[major_ver.to_s] = []
+        end
+
+        m_data[major_ver.to_s] << {
+          'name'    => index,
+          'y'       => value,
+          'drilldown' => "Version #{minor_ver}.*"
+        }
+      end
+
+      minor = m_data.map do |index, value|
+        major_ver = value[0]['name'].match(/[0-9]/)
+
+        {
+          'id'      => "Version #{major_ver}.*",
+          'name'    => "Version #{major_ver}.*",
+          'data'    => value
+        }
+      end
+
+      path_hash = {}
+      data.each do |row|
+        maj, min, pat = row['number'].split('.')
+        if path_hash["Version #{maj}.#{min}.*"].nil?
+          path_hash["Version #{maj}.#{min}.*"] = []
+        end
+        path_hash["Version #{maj}.#{min}.*"] << [row['number'], row['downloads']]
+      end
+
+      path = path_hash.map do |row|
+        {
+          'id'    => row[0],
+          'data'  => row[1]
+        }
+      end
+
+      nest_drilldown = [minor, path].flatten
+
+      [major, nest_drilldown]
     end
 
     def commit_week_day(data)
@@ -128,7 +209,7 @@ class VizApp < Sinatra::Base
     #   commits_transform
     # end
 
-    def closed_issues(data)
+    def issues_info(data)
       data.map! do |row|
         [row['number'], row['duration']]
       end
@@ -146,11 +227,12 @@ class VizApp < Sinatra::Base
     @version_downloads = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads')
     @version_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days')
     @version_downloads_stack = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_stack')
+    @version_downloads_nest_drilldown = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_nest')
     erb :rubygems
   end
 
   get '/github' do
-    @closed_issues = HTTParty.get('http://localhost:4567/api/v1/github/closed_issues')
+    @issues_info = HTTParty.get('http://localhost:4567/api/v1/github/issues_info')
     @commit_week_day = HTTParty.get('http://localhost:4567/api/v1/github/commit_week_day')
     @commits_month_day = HTTParty.get('http://localhost:4567/api/v1/github/commits_month_day')
     erb :github
@@ -193,10 +275,16 @@ class VizApp < Sinatra::Base
     version_downloads_data.to_json
   end
 
-  get '/api/v1/github/closed_issues' do
+  get '/api/v1/rubygems/version_downloads_nest' do
     content_type :json
-    closed_issues = closed_issues(@doc['closed_issues'])
-    closed_issues.to_json
+    version_downloads_nest = version_downloads_nest(@doc['version_downloads'])
+    version_downloads_nest.to_json
+  end
+
+  get '/api/v1/github/issues_info' do
+    content_type :json
+    issues_info = issues_info(@doc['issues_info'])
+    issues_info.to_json
   end
 
   get '/api/v1/github/commit_week_day' do

@@ -14,6 +14,7 @@
 <script>
   var version_downloads_stack = <%= @version_downloads_stack.to_json %>
   var version_downloads_days = <%= @version_downloads_days.to_json %>
+  var version_downloads_nest_drilldown = <%= @version_downloads_nest_drilldown.to_json %>
   $(function () {
     $('#drilldown').highcharts({
       chart: {
@@ -58,6 +59,48 @@
         }
     });
 
+    $('#nest-drilldown').highcharts({
+      chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Version Downloads(drilldown)'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Downloads'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+        },
+        series: [{
+          name: 'Versions',
+          colorByPoint: true,
+          data: version_downloads_nest_drilldown[0]
+        }],
+        drilldown: {
+          series: version_downloads_nest_drilldown[1]
+        }
+    })
     $('#stockline').highcharts('StockChart', {
         rangeSelector: {
             selected: 4
@@ -100,6 +143,7 @@
   <hr>
   
   <div id="drilldown"></div>
+  <div id="nest-drilldown"></div>
   <div id="stockline"></div>
 </body>
 </html>
