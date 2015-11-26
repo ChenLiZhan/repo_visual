@@ -15,6 +15,7 @@ class VizApp < Sinatra::Base
       documents << document
     end      
 
+    @collection = client['gems']
     @doc = documents.last
   end
 
@@ -22,6 +23,17 @@ class VizApp < Sinatra::Base
   get '/' do
     erb :index
   end
+
+
+  get '/stackoverflow' do
+    @question_views = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/question_views')
+    @question_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/question_titles')
+    #puts @question_word_count
+    #@readme_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/readme_word_count')
+    #puts @readme_word_count
+    erb :stackoverflow
+  end
+
 
   get '/rubygems' do
     @process_downloads_days = HTTParty.get('http://localhost:4567/api/v1/rubygems/version_downloads_days_process')
@@ -36,7 +48,22 @@ class VizApp < Sinatra::Base
     @issues_info = HTTParty.get('http://localhost:4567/api/v1/github/issues_info')
     @commit_week_day = HTTParty.get('http://localhost:4567/api/v1/github/commit_week_day')
     @commits_month_day = HTTParty.get('http://localhost:4567/api/v1/github/commits_month_day')
+    @readme_word_count = HTTParty.get('http://localhost:4567/api/v1/github/readme_word_count')
     erb :github
+  end
+
+  #get questions title
+  get '/api/v1/stackoverflow/question_titles' do
+    content_type :json
+    question_word_count = question_word_count(client['gems'])
+    question_word_count.to_json
+  end
+
+  #get question views
+  get '/api/v1/stackoverflow/question_views' do
+    content_type :json
+    question_views = question_views(@doc['questions'])
+    question_views.to_json
   end
 
   get '/api/v1/rubygems/version_downloads_days' do
@@ -98,6 +125,12 @@ class VizApp < Sinatra::Base
     content_type :json
     commits = commit_heatmap(@doc['commit_activity_last_year'])
     commits.to_json
+  end
+
+  get '/api/v1/github/readme_word_count' do 
+    content_type :json
+    readme_word_count = readme_word_count(@doc['readme_word_count'])
+    readme_word_count.to_json
   end
 
 end
