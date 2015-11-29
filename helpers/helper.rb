@@ -1,4 +1,39 @@
 module VizHelper
+
+  def question_word_count(data)
+    question_title_word_count = []
+    aggregate =  data.aggregate([
+      {"$project" => {"questions.title": 1, _id: 0}},
+      {"$unwind" => "$questions" },
+      {"$unwind" => "$questions.title" },
+      {"$group" => {_id: "$questions", count: {"$sum" => 1}}},
+      {"$sort" => {count: -1}},
+      ])
+
+    aggregate.each do |row|
+      question_title_word_count << { "text" => row['_id']['title'], "size" =>row['count']}
+    end
+
+    question_title_word_count
+  end
+
+  def readme_word_count(data)
+    readme_word_count = []
+    data.each do |row|
+      readme_word_count << {"text" => row[0], "size" => row[1]}
+    end
+    readme_word_count
+  end
+
+  def question_views(data)
+    questions_hash = {}
+    data.each do |row|
+      questions_hash[Time.at(row['creation_date'].to_i).strftime("%m-%d-%Y")] = row['views']
+    end
+
+    questions_hash
+  end
+
   def version_downloads(data)
     version_downloads_hash = {}
     data.each do |row|
