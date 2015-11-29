@@ -14,7 +14,6 @@
   <script src="d3.layout.cloud.js"></script>
   <script>
     var commits_month_day = <%= @commits_month_day.to_json %>
-    console.log(commits_month_day);
     var min_date = commits_month_day.min_date.split('-');
     var max_date = commits_month_day.max_date.split('-');
 
