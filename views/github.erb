@@ -5,13 +5,13 @@
   <title>Visualization</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <!-- <script src="//www.google.com/jsapi"></script> -->
-  <script src="/highcharts.js"></script>
-  <script src="/chartkick.js"></script>
-  <script src="/heatmap.js"></script>
+  <script src="/javascripts/highcharts.js"></script>
+  <script src="/javascripts/chartkick.js"></script>
+  <script src="/javascripts/heatmap.js"></script>
   <script src="http://code.highcharts.com/modules/exporting.js"></script>
   <!-- Header libraries for D3 -->
   <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="/d3.layout.cloud.js"></script>
+  <script src="/javascripts/d3.layout.cloud.js"></script>
   <script>
     var commits_month_day = <%= @commits_month_day.to_json %>
     var min_date = commits_month_day.min_date.split('-');
