@@ -8,7 +8,8 @@ require_relative './helpers/helper.rb'
 require_relative './lib/repos.rb'
 
 class VizApp < Sinatra::Base
-  Faye::WebSocket.load_adapter('thin')
+  Faye::WebSocket.load_adapter('puma')
+  set :server, 'puma'
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
 
   helpers VizHelper

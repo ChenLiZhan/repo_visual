@@ -12,4 +12,4 @@ gem 'nokogiri'
 
 gem 'faye-websocket', require: 'faye/websocket'
 gem 'websocket-client-simple'
-gem 'thin'
+gem 'puma'
