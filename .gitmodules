@@ -1,0 +1,3 @@
+[submodule "lib/repo_miner"]
+	path = lib/repo_miner
+	url = git@github.com:ISS-RepoMiner/repo_miner.git

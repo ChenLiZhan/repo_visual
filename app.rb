@@ -6,7 +6,7 @@ require 'httparty'
 require 'date'
 require 'faye/websocket'
 require_relative './helpers/helper.rb'
-require_relative './lib/repos.rb'
+require_relative './lib/repo_miner/lib/repos.rb'
 
 class VizApp < Sinatra::Base
   register Sinatra::Namespace
