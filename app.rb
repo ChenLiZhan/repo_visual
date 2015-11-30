@@ -17,7 +17,7 @@ class VizApp < Sinatra::Base
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
   HOST_API = 'http://localhost:4567/api/v1'
 
-  ['/api/v1/*', '/rubygems/?:id?', '/github/?:id?', '/stackoverflow/?:id?'].each do |path|
+  ['/api/v1/*', '/dashboard/?:id?', '/rubygems/?:id?', '/github/?:id?', '/stackoverflow/?:id?'].each do |path|
     before path do
       if params[:id].nil?
         documents = []
@@ -176,6 +176,29 @@ class VizApp < Sinatra::Base
       @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
     end
     erb :github
+  end
+
+  get '/dashboard/?:id?' do
+    if params[:id].nil?
+      @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
+      @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
+      @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day').map do |data|
+        [data[0], data[1]]
+      end
+      @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
+      @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
+      @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
+    else
+      @version_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days?id=#{params[:id]}")
+      @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")
+      @commit_week_day = HTTParty.get(HOST_API + "/github/commit_week_day?id=#{params[:id]}").map do |data|
+        [data[0], data[1]]
+      end
+      @commits_month_day = HTTParty.get(HOST_API + "/github/commits_month_day?id=#{params[:id]}")
+      @issues_info = HTTParty.get(HOST_API + "/github/issues_info?id=#{params[:id]}")
+      @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
+    end
+    erb :dashboard
   end
 
   get '/?:id?' do
