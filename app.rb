@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require "sinatra/namespace"
 require 'chartkick'
 require 'mongo'
 require 'httparty'
@@ -8,13 +9,15 @@ require_relative './helpers/helper.rb'
 require_relative './lib/repos.rb'
 
 class VizApp < Sinatra::Base
+  register Sinatra::Namespace
+  helpers VizHelper
+
   Faye::WebSocket.load_adapter('puma')
   set :server, 'puma'
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
+  HOST_API = 'http://localhost:4567/api/v1'
 
-  helpers VizHelper
-  
-  ['/rubygems/?:id?', '/github/?:id?', '/stackoverflow/?:id?'].each do |path|
+  ['/api/v1/*', '/rubygems/?:id?', '/github/?:id?', '/stackoverflow/?:id?'].each do |path|
     before path do
       if params[:id].nil?
         documents = []
@@ -129,8 +132,8 @@ class VizApp < Sinatra::Base
   end
 
   get '/stackoverflow/?:id?' do
-    @question_views = question_views(@doc['questions']).to_json
-    @question_word_count = question_word_count(client['gems']).to_json
+    @question_views = HTTParty.get(HOST_API + '/stackoverflow/question_views')
+    @question_word_count = HTTParty.get(HOST_API + '/stackoverflow/question_titles')
     #puts @question_word_count
     #@readme_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/readme_word_count')
     #puts @readme_word_count
@@ -139,37 +142,102 @@ class VizApp < Sinatra::Base
 
 
   get '/rubygems/?:id?' do
-    version_downloads_days_process = @doc['version_downloads_days'].map do |version|
-      dates = {}
-      @doc['version_downloads_days'].each do |version|
-        version['downloads_date'].each do |value|
-          dates[value[0]] = 0
-        end
-      end
-      version['downloads_date'].each do |date, count|
-        dates[date] = count 
-      end
-      {'number' => version['number'], 'downloads_date' => dates}
-    end
-
-    @process_downloads_days = version_downloads_days_process
-    @version_downloads = version_downloads(@doc['version_downloads'])
-    @version_downloads_days = version_downloads_days(@doc['version_downloads_days'])
-    @version_downloads_stack = version_downloads_stack(@doc['version_downloads'])
-    @version_downloads_nest_drilldown = version_downloads_nest(@doc['version_downloads'])
+    @process_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days_process')
+    @version_downloads = HTTParty.get(HOST_API + '/rubygems/version_downloads')
+    @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
+    @version_downloads_stack = HTTParty.get(HOST_API + '/rubygems/version_downloads_stack')
+    @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
     erb :rubygems
   end
 
   get '/github/?:id?' do
-    @issues_info = issues_info(@doc['issues_info'])
-    @commit_week_day = commit_week_day(@doc['commit_activity_last_year'])
-    @commits_month_day = commit_heatmap(@doc['commit_activity_last_year'])
-    @readme_word_count = readme_word_count(@doc['readme_word_count'])
+    @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
+    @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day')
+    @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
+    @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
     erb :github
   end
 
   get '/?:id?' do
     @id = params[:id]
     erb :index
+  end
+
+  namespace '/api/v1' do
+    namespace '/rubygems' do
+      get '/version_downloads_days_process' do
+        content_type :json
+        version_downloads_days_process = @doc['version_downloads_days'].map do |version|
+          dates = {}
+          @doc['version_downloads_days'].each do |version|
+            version['downloads_date'].each do |value|
+              dates[value[0]] = 0
+            end
+          end
+          version['downloads_date'].each do |date, count|
+            dates[date] = count 
+          end
+          {'number' => version['number'], 'downloads_date' => dates}
+        end
+
+        version_downloads_days_process.to_json
+      end
+
+      get '/version_downloads' do
+        content_type :json
+        version_downloads(@doc['version_downloads']).to_json
+      end
+
+      get '/version_downloads_days' do
+        content_type :json
+        version_downloads_days(@doc['version_downloads_days']).to_json
+      end
+
+      get '/version_downloads_stack' do
+        content_type :json
+        version_downloads_stack(@doc['version_downloads']).to_json
+      end
+
+      get '/version_downloads_nest' do
+        content_type :json
+        version_downloads_nest(@doc['version_downloads']).to_json
+      end
+    end
+
+    namespace '/github' do
+      get '/issues_info' do
+        content_type :json
+        issues_info(@doc['issues_info']).to_json
+      end
+
+      get '/commit_week_day' do
+        content_type :json
+        commit_week_day(@doc['commit_activity_last_year']).to_json
+      end
+
+      get '/commits_month_day' do
+        content_type :json
+        commit_heatmap(@doc['commit_activity_last_year']).to_json
+      end
+
+      get '/readme_word_count' do
+        content_type :json
+        readme_word_count(@doc['readme_word_count']).to_json
+      end
+    end
+
+    namespace 'stackoverflow' do
+      get '/question_views' do
+        content_type :json
+        question_views = question_views(@doc['questions'])
+        question_views.to_json
+      end
+
+      get '/question_titles' do
+        content_type :json
+        question_word_count = question_word_count(client['gems'])
+        question_word_count.to_json
+      end
+    end
   end
 end
