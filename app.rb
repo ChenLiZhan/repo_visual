@@ -132,29 +132,49 @@ class VizApp < Sinatra::Base
   end
 
   get '/stackoverflow/?:id?' do
-    @question_views = HTTParty.get(HOST_API + '/stackoverflow/question_views')
-    @question_word_count = HTTParty.get(HOST_API + '/stackoverflow/question_titles')
-    #puts @question_word_count
-    #@readme_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/readme_word_count')
-    #puts @readme_word_count
+    if params[:id].nil?
+      @question_views = HTTParty.get(HOST_API + '/stackoverflow/question_views')
+      @question_word_count = HTTParty.get(HOST_API + '/stackoverflow/question_titles')
+      #puts @question_word_count
+      #@readme_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/readme_word_count')
+      #puts @readme_word_count
+    else
+      @question_views = HTTParty.get(HOST_API + "/stackoverflow/question_views?id=#{params[:id]}")
+      @question_word_count = HTTParty.get(HOST_API + "/stackoverflow/question_titles?id=#{params[:id]}")
+    end
     erb :stackoverflow
   end
 
 
   get '/rubygems/?:id?' do
-    @process_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days_process')
-    @version_downloads = HTTParty.get(HOST_API + '/rubygems/version_downloads')
-    @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
-    @version_downloads_stack = HTTParty.get(HOST_API + '/rubygems/version_downloads_stack')
-    @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
+    if params[:id].nil?
+      @process_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days_process')
+      @version_downloads = HTTParty.get(HOST_API + '/rubygems/version_downloads')
+      @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
+      @version_downloads_stack = HTTParty.get(HOST_API + '/rubygems/version_downloads_stack')
+      @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
+    else
+      @process_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days_process?id=#{params[:id]}")
+      @version_downloads = HTTParty.get(HOST_API + "/rubygems/version_downloads?id=#{params[:id]}")
+      @version_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days?id=#{params[:id]}")
+      @version_downloads_stack = HTTParty.get(HOST_API + "/rubygems/version_downloads_stack?id=#{params[:id]}")
+      @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")
+    end
     erb :rubygems
   end
 
   get '/github/?:id?' do
-    @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
-    @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day')
-    @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
-    @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
+    if params[:id].nil?
+      @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
+      @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day')
+      @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
+      @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
+    else
+      @issues_info = HTTParty.get(HOST_API + "/github/issues_info?id=#{params[:id]}")
+      @commit_week_day = HTTParty.get(HOST_API + "/github/commit_week_day?id=#{params[:id]}")
+      @commits_month_day = HTTParty.get(HOST_API + "/github/commits_month_day?id=#{params[:id]}")
+      @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
+    end
     erb :github
   end
 
