@@ -293,7 +293,7 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="list-group">
-                                <% @doc['contributors'].each do |contributor| %>
+                                <% @doc['contributors'][0..9].each do |contributor| %>
                                     <a href="#" class="list-group-item">
                                         <%= contributor['name'] %>
                                         <span class="pull-right text-muted small"><em><%= contributor['contributions'] %> commits</em>
