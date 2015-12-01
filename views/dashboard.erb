@@ -313,7 +313,31 @@
                         </div>
                         <!-- /.panel-body -->
                     </div>
-
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-graduation-cap fa-fw"></i> Dependencies
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="list-group">
+                                <span style="background-color: #3B8997; color: #FFFFFF" class="text-center list-group-item">Development</span>
+                                <% @doc['dependencies']['development'].each do |dependency| %>
+                                    <a href="#" class="list-group-item">
+                                        <%= dependency['name'] %>
+                                        <span class="pull-right text-muted small"><em><%= dependency['requirements'] %></em>
+                                    </a>
+                                <% end %>
+                                <span style="background-color: #3B8997; color: #FFFFFF" class="text-center list-group-item">Runtime</span>
+                                <% @doc['dependencies']['runtime'].each do |dependency| %>
+                                    <a href="#" class="list-group-item">
+                                        <%= dependency['name'] %>
+                                        <span class="pull-right text-muted small"><em><%= dependency['requirements'] %></em>
+                                    </a>
+                                <% end %>
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <i class="fa fa-clock-o fa-fw"></i> Commits in Days of Week
@@ -323,7 +347,7 @@
                             <div id="commits-days-week"></div>
                         </div>
                         <!-- /.panel-body -->
-                    </div>                
+                    </div>
                 </div>
                 <!-- /.col-lg-4 -->
             </div>
