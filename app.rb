@@ -198,6 +198,7 @@ class VizApp < Sinatra::Base
       @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
       @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
       @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
+      @commits_trend = HTTParty.get(HOST_API + '/github/commits_trend')
     else
       @version_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days?id=#{params[:id]}")
       @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")
@@ -207,6 +208,7 @@ class VizApp < Sinatra::Base
       @commits_month_day = HTTParty.get(HOST_API + "/github/commits_month_day?id=#{params[:id]}")
       @issues_info = HTTParty.get(HOST_API + "/github/issues_info?id=#{params[:id]}")
       @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
+      @commits_trend = HTTParty.get(HOST_API + "/github/commits_trend?id=#{params[:id]}")
     end
     erb :dashboard
   end
@@ -275,6 +277,11 @@ class VizApp < Sinatra::Base
       get '/commits_month_day' do
         content_type :json
         commit_heatmap(@doc['commit_activity_last_year']).to_json
+      end
+
+      get '/commits_trend' do
+        content_type :json
+        commits_trend(@doc['commit_activity_last_year']).to_json
       end
 
       get '/readme_word_count' do
