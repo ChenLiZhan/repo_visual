@@ -290,13 +290,27 @@
                 </div>
                 <!-- /.col-lg-8 -->
                 <div class="col-lg-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <i class="fa fa-code fa-fw"></i> Last Commit
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <i class="fa fa-code fa-fw"></i> Last Commit
+                                </div>
+                                <div class="panel-body">
+                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days ago</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="panel-body">
-                            <div class="huge text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days ago</div>
-                        </div>
+                        <div class="col-lg-6">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <i class="fa fa-question fa-fw"></i> Opening Issues
+                                </div>
+                                <div class="panel-body">
+                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['issues'] %> issues</div>
+                                </div>
+                            </div>
+                        </div> 
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
