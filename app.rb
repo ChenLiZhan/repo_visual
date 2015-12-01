@@ -17,6 +17,16 @@ class VizApp < Sinatra::Base
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
   HOST_API = 'http://localhost:4567/api/v1'
 
+  before '/gems' do
+    documents = []
+    client[:gems].find.each do |document|
+      documents << document
+    end      
+
+    @collection = client['gems']
+    @doc = documents
+  end
+
   ['/api/v1/*', '/dashboard/?:id?', '/rubygems/?:id?', '/github/?:id?', '/stackoverflow/?:id?'].each do |path|
     before path do
       if params[:id].nil?
@@ -199,6 +209,10 @@ class VizApp < Sinatra::Base
       @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
     end
     erb :dashboard
+  end
+
+  get '/gems' do
+    erb :gems
   end
 
   get '/?:id?' do
