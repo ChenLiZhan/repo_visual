@@ -442,7 +442,7 @@
     <script src="/javascripts/d3.layout.cloud.js"></script>
 
     <script>
-        var version_downloads_days = <%= @version_downloads_days.to_json %> ;
+        var version_downloads_days_aggregate = <%= @version_downloads_days_aggregate.to_json %> ;
         var version_downloads_nest_drilldown = <%= @version_downloads_nest_drilldown.to_json %> ;
         var commit_week_day = <%= @commit_week_day.to_json %>;
         var commits_month_day = <%= @commits_month_day.to_json %>;
@@ -473,7 +473,7 @@
                     valueDecimals: 2
                 },
 
-                series: version_downloads_days
+                series: version_downloads_days_aggregate
             });
             $('#nest-drilldown').highcharts({
                 chart: {

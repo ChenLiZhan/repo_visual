@@ -198,6 +198,32 @@ module VizHelper
     version_downloads_days
   end
 
+  def version_downloads_days_aggregate(data)
+    version_downloads_days_aggregate = {}
+    data.each do |row|
+      major, minor, patch = row['number'].split('.')
+      version_downloads_days_aggregate["#{major}.#{minor}"] = Hash.new(0)
+    end
+
+    data.each do |row|
+      major, minor, patch = row['number'].split('.')
+      row['downloads_date'].each_pair do |date, downloads|
+        date = date.split('-')
+        version_downloads_days_aggregate["#{major}.#{minor}"][Date.new(date[0].to_i, date[1].to_i, date[2].to_i).to_time.to_i * 1000] += downloads
+      end
+    end
+
+    result = []
+    version_downloads_days_aggregate.each_pair do |key, value|
+      result << {
+        'name'    => key,
+        'data'   => value.to_a
+      }
+    end
+
+    result
+  end
+
   def commit_heatmap(data)
     # p data
     # cwday

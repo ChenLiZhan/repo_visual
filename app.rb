@@ -190,7 +190,7 @@ class VizApp < Sinatra::Base
 
   get '/dashboard/?:id?' do
     if params[:id].nil?
-      @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
+      @version_downloads_days_aggregate = HTTParty.get(HOST_API + '/rubygems/version_downloads_days_aggregate')
       @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
       @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day').map do |data|
         [data[0], data[1]]
@@ -200,7 +200,7 @@ class VizApp < Sinatra::Base
       @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
       @commits_trend = HTTParty.get(HOST_API + '/github/commits_trend')
     else
-      @version_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days?id=#{params[:id]}")
+      @version_downloads_days_aggregate = HTTParty.get(HOST_API + "/rubygems/version_downloads_days_aggregate?id=#{params[:id]}")
       @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")
       @commit_week_day = HTTParty.get(HOST_API + "/github/commit_week_day?id=#{params[:id]}").map do |data|
         [data[0], data[1]]
@@ -250,6 +250,11 @@ class VizApp < Sinatra::Base
       get '/version_downloads_days' do
         content_type :json
         version_downloads_days(@doc['version_downloads_days']).to_json
+      end
+
+      get '/version_downloads_days_aggregate' do
+        content_type :json
+        version_downloads_days_aggregate(@doc['version_downloads_days']).to_json
       end
 
       get '/version_downloads_stack' do
