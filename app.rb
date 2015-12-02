@@ -5,6 +5,9 @@ require 'mongo'
 require 'httparty'
 require 'date'
 require 'faye/websocket'
+require 'nokogiri'
+require 'open-uri'
+
 require_relative './helpers/helper.rb'
 require_relative './lib/repo_miner/lib/repos.rb'
 
@@ -68,8 +71,19 @@ class VizApp < Sinatra::Base
       ws.on(:message) do |msg|
         step = msg.data.match(/^\d+/)
         if step.nil?
-            username, gem_name = msg.data.split(' ')
-            @github = Repos::GithubData.new(username, gem_name)
+            gem_name = msg.data
+            document = open("https://rubygems.org/gems/#{gem_name}")
+            noko_document = Nokogiri::HTML(document)
+            links = noko_document.xpath("//div[@class='t-list__items']//a[@class='gem__link t-list__item']/@href")
+            username = ''
+            repo_name = ''
+            links[0..2].each do |link|
+              if link.value =~ /https?:\/\/github\.com/
+                username, repo_name = link.value.gsub(/https?:\/\/github.com\//, '').split('/')
+              end
+            end
+
+            @github = Repos::GithubData.new(username, repo_name)
             @rubygems = Repos::RubyGemsData.new(gem_name)
             @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
             @stackoverflow = Repos::StackOverflow.new(gem_name)
