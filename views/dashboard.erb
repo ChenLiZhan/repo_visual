@@ -38,6 +38,7 @@
 <body>
 
     <div id="wrapper">
+        <!--
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
@@ -51,11 +52,11 @@
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
-            </div>
+            <!-- </div> -->
             <!-- /.navbar-static-side -->
-        </nav>
+        <!-- </nav> -->
 
-        <div id="page-wrapper">
+        <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" style="color: #5c5c5c;"><%= @doc['name'] %></h1>
@@ -327,7 +328,7 @@
                                     <i class="fa fa-code fa-fw"></i> Last Commit
                                 </div>
                                 <div class="panel-body">
-                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days ago</div>
+                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days</div>
                                 </div>
                             </div>
                         </div>
