@@ -211,6 +211,7 @@ class VizApp < Sinatra::Base
       end
       @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
       @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
+      @issues_aggregate = HTTParty.get(HOST_API + '/github/issues_aggregate')
       @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
       @commits_trend = HTTParty.get(HOST_API + '/github/commits_trend')
     else
@@ -221,6 +222,7 @@ class VizApp < Sinatra::Base
       end
       @commits_month_day = HTTParty.get(HOST_API + "/github/commits_month_day?id=#{params[:id]}")
       @issues_info = HTTParty.get(HOST_API + "/github/issues_info?id=#{params[:id]}")
+      @issues_aggregate = HTTParty.get(HOST_API + "/github/issues_aggregate?id=#{params[:id]}")
       @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
       @commits_trend = HTTParty.get(HOST_API + "/github/commits_trend?id=#{params[:id]}")
     end
@@ -286,6 +288,11 @@ class VizApp < Sinatra::Base
       get '/issues_info' do
         content_type :json
         issues_info(@doc['issues_info']).to_json
+      end
+
+      get '/issues_aggregate' do
+        content_type :json
+        issues_aggregate(@doc['issues_info']).to_json
       end
 
       get '/commit_week_day' do
