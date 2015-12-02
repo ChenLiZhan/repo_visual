@@ -198,6 +198,32 @@ module VizHelper
     version_downloads_days
   end
 
+  def version_downloads_days_aggregate(data)
+    version_downloads_days_aggregate = {}
+    data.each do |row|
+      major, minor, patch = row['number'].split('.')
+      version_downloads_days_aggregate["#{major}.#{minor}"] = Hash.new(0)
+    end
+
+    data.each do |row|
+      major, minor, patch = row['number'].split('.')
+      row['downloads_date'].each_pair do |date, downloads|
+        date = date.split('-')
+        version_downloads_days_aggregate["#{major}.#{minor}"][Date.new(date[0].to_i, date[1].to_i, date[2].to_i).to_time.to_i * 1000] += downloads
+      end
+    end
+
+    result = []
+    version_downloads_days_aggregate.each_pair do |key, value|
+      result << {
+        'name'    => key,
+        'data'   => value.to_a
+      }
+    end
+
+    result
+  end
+
   def commit_heatmap(data)
     # p data
     # cwday
@@ -259,5 +285,58 @@ module VizHelper
     end
 
     data
+  end
+
+  def issues_aggregate(data)
+    issues_month_duration = Hash.new()
+    data.each do |row|
+      datetime = DateTime.iso8601(row['created_at'])
+      year = datetime.year
+      month = datetime.month
+      if issues_month_duration["#{year}-#{month}"].nil?
+        issues_month_duration["#{year}-#{month}"] = []
+      end
+      issues_month_duration["#{year}-#{month}"] << row['duration']
+    end
+
+    issues_month_duration
+
+    result = {
+      'data' => [],
+      'months' => []
+    }
+    issues_month_duration.each_pair do |month, values|
+      if values.empty?
+        lowest, q1, q2, q3, highest = 0, 0, 0, 0, 0
+      else
+        sorted_values = values.sort
+        lowest = sorted_values.first
+        q1_position = (values.size + 1) / 4.to_f
+        q1_decimal, q1_remainder = q1_position.to_i, q1_position % 1 
+        q1 = q1_remainder * sorted_values[q1_decimal] + (1 - q1_remainder) * sorted_values[q1_decimal - 1]
+        
+        q2_position = (values.size + 1) / 2.to_f
+        if q2_position % 1 === 0
+          q2 = sorted_values[q2_position - 1]
+        else
+          q2_decimal, q2_remainder = q2_position.to_i, q2_position % 1
+          q2 = q2_remainder * sorted_values[q2_decimal] + (1 - q2_remainder) * sorted_values[q2_decimal - 1]
+        end
+
+        q3_position = 3 * q1_position
+        q3_decimal, q3_remainder = q3_position.to_i, q3_position % 1
+        if q3_decimal === values.size
+          q3 = sorted_values.last
+        else
+          q3 = q3_remainder * sorted_values[q3_decimal] + (1 - q3_remainder) * sorted_values[q3_decimal - 1]
+        end
+        highest = sorted_values.last
+      end
+
+      result['months'] << month
+      result['data'] << [lowest, q1, q2, q3, highest]
+    end
+
+    result
   end
 end

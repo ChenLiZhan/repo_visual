@@ -65,7 +65,7 @@
             <!-- /.row -->
 
             <div class="row">
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-yee">
                         <div class="panel-heading">
                             <div class="row">
@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['version_downloads'].last['number'] %></div>
-                                    <div>Latest Version</div>
+                                    <div>Latest</div>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
@@ -97,7 +97,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['total_downloads'] %></div>
-                                    <div>Total Downloads</div>
+                                    <div>Downloads</div>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['stars'] %></div>
-                                    <div>Stars on Github</div>
+                                    <div>Stars</div>
                                 </div>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
@@ -141,7 +141,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['forks'] %></div>
-                                    <div>Forks on Github</div>
+                                    <div>Forks</div>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -176,7 +176,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-ree">
                         <div class="panel-heading">
                             <div class="row">
@@ -185,7 +185,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['commits'] %></div>
-                                    <div>Total Commits</div>
+                                    <div>Commits</div>
                                 </div>
                             </div>
                         </div>
@@ -301,7 +301,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <div id="issue-resolution"></div>
+                            <div id="issues-boxplot"></div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -435,6 +435,7 @@
     <script src="/javascripts/highstock.js"></script>
     <script src="/javascripts/drilldown.js"></script>
     <script src="/javascripts/chartkick.js"></script>
+    <script src="/javascripts/highcharts-more.js"></script>
     <script src="/javascripts/heatmap.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
     <!-- Header libraries for D3 -->
@@ -442,12 +443,13 @@
     <script src="/javascripts/d3.layout.cloud.js"></script>
 
     <script>
-        var version_downloads_days = <%= @version_downloads_days.to_json %> ;
+        var version_downloads_days_aggregate = <%= @version_downloads_days_aggregate.to_json %> ;
         var version_downloads_nest_drilldown = <%= @version_downloads_nest_drilldown.to_json %> ;
         var commit_week_day = <%= @commit_week_day.to_json %>;
         var commits_month_day = <%= @commits_month_day.to_json %>;
-        var commits_trend = <%= @commits_trend.to_json %>
+        var commits_trend = <%= @commits_trend.to_json %>;
         var issues_info = <%= @issues_info.to_json %>;
+        var issues_aggregate = <%= @issues_aggregate.to_json %>;
 
         $(function() {
             $('#stockline-downloads').highcharts('StockChart', {
@@ -473,7 +475,7 @@
                     valueDecimals: 2
                 },
 
-                series: version_downloads_days
+                series: version_downloads_days_aggregate
             });
             $('#nest-drilldown').highcharts({
                 chart: {
@@ -707,71 +709,43 @@
                 }]
 
             });
-            $('#issue-resolution').highcharts({
+            $('#issues-boxplot').highcharts({
                 chart: {
-                    type: 'scatter',
-                    zoomType: 'xy'
+                    type: 'boxplot'
                 },
+
                 title: {
                     text: 'Issues Resolution'
                 },
-                xAxis: {
-                    min: 0,
-                    title: {
-                        enabled: true,
-                        text: 'Issue Number'
-                    },
-                    startOnTick: true,
-                    endOnTick: true,
-                    showLastLabel: true
+
+                legend: {
+                    enabled: false
                 },
+
+                xAxis: {
+                    categories: issues_aggregate.months.slice(Math.max(issues_aggregate.months.length - 12, 1))
+                },
+
                 yAxis: {
-                    min: 0,
                     title: {
                         text: 'Days'
+                    },
+                    min: 0
+                },
+                tooltip: {
+                    useHTML: true,
+                    formatter: function() {
+                        return 'Max: <b>' + this.y + '</b><br>Q3: <b>' + this.point.q3 + '</b><br>Median: <b>' + this.point.median + '</b><br>Q1: <b>' + this.point.q1 + '</b><br>Min: <b>' + this.point.low + '</b><br>';
                     }
                 },
-                legend: {
-                    layout: 'vertical',
-                    align: 'left',
-                    verticalAlign: 'top',
-                    x: 100,
-                    y: 0,
-                    floating: true,
-                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-                    borderWidth: 1
-                },
-                plotOptions: {
-                    scatter: {
-                        marker: {
-                            radius: 5,
-                            states: {
-                                hover: {
-                                    enabled: true,
-                                    lineColor: 'rgb(100,100,100)'
-                                }
-                            }
-                        },
-                        states: {
-                            hover: {
-                                marker: {
-                                    enabled: false
-                                }
-                            }
-                        },
-                        tooltip: {
-                            headerFormat: '<b>Issue {point.x}</b><br>',
-                            pointFormat: 'Take {point.y} days to fix'
-                        }
+                series: [{
+                    name: 'Days to resolve',
+                    data: issues_aggregate.data.slice(Math.max(issues_aggregate.data.length - 12, 1)),
+                    tooltip: {
+                        headerFormat: '<em>{point.key}</em><br/>'
                     }
-                },
-                series: [
-                    {
-                        name: 'Issues',
-                        data: issues_info,
-                        color: 'rgba(119, 152, 191, .5)',
-                    }
-                ]
+                }]
+
             });
         });
 

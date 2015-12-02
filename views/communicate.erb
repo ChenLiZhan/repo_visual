@@ -3,6 +3,7 @@
     <title>Communicate</title>
   </head>
   <body>
+
      <input type="text" id="input" />
      <ul id="messages"></ul>
 
@@ -16,7 +17,7 @@
       var ws = new WebSocket(ws_uri);
 
       ws.onopen = function () {
-        append_li('Please type GITHUB_USERNAME GEM_NAME in order');
+        append_li('Please type the name of the gem');
       }
       ws.onmessage = function (msg) {
         console.log(msg.data);

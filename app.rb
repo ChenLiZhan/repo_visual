@@ -5,6 +5,9 @@ require 'mongo'
 require 'httparty'
 require 'date'
 require 'faye/websocket'
+require 'nokogiri'
+require 'open-uri'
+
 require_relative './helpers/helper.rb'
 require_relative './lib/repo_miner/lib/repos.rb'
 
@@ -68,8 +71,19 @@ class VizApp < Sinatra::Base
       ws.on(:message) do |msg|
         step = msg.data.match(/^\d+/)
         if step.nil?
-            username, gem_name = msg.data.split(' ')
-            @github = Repos::GithubData.new(username, gem_name)
+            gem_name = msg.data
+            document = open("https://rubygems.org/gems/#{gem_name}")
+            noko_document = Nokogiri::HTML(document)
+            links = noko_document.xpath("//div[@class='t-list__items']//a[@class='gem__link t-list__item']/@href")
+            username = ''
+            repo_name = ''
+            links[0..2].each do |link|
+              if link.value =~ /https?:\/\/github\.com/
+                username, repo_name = link.value.gsub(/https?:\/\/github.com\//, '').split('/')
+              end
+            end
+
+            @github = Repos::GithubData.new(username, repo_name)
             @rubygems = Repos::RubyGemsData.new(gem_name)
             @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
             @stackoverflow = Repos::StackOverflow.new(gem_name)
@@ -190,23 +204,25 @@ class VizApp < Sinatra::Base
 
   get '/dashboard/?:id?' do
     if params[:id].nil?
-      @version_downloads_days = HTTParty.get(HOST_API + '/rubygems/version_downloads_days')
+      @version_downloads_days_aggregate = HTTParty.get(HOST_API + '/rubygems/version_downloads_days_aggregate')
       @version_downloads_nest_drilldown = HTTParty.get(HOST_API + '/rubygems/version_downloads_nest')
       @commit_week_day = HTTParty.get(HOST_API + '/github/commit_week_day').map do |data|
         [data[0], data[1]]
       end
       @commits_month_day = HTTParty.get(HOST_API + '/github/commits_month_day')
       @issues_info = HTTParty.get(HOST_API + '/github/issues_info')
+      @issues_aggregate = HTTParty.get(HOST_API + '/github/issues_aggregate')
       @readme_word_count = HTTParty.get(HOST_API + '/github/readme_word_count')
       @commits_trend = HTTParty.get(HOST_API + '/github/commits_trend')
     else
-      @version_downloads_days = HTTParty.get(HOST_API + "/rubygems/version_downloads_days?id=#{params[:id]}")
+      @version_downloads_days_aggregate = HTTParty.get(HOST_API + "/rubygems/version_downloads_days_aggregate?id=#{params[:id]}")
       @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")
       @commit_week_day = HTTParty.get(HOST_API + "/github/commit_week_day?id=#{params[:id]}").map do |data|
         [data[0], data[1]]
       end
       @commits_month_day = HTTParty.get(HOST_API + "/github/commits_month_day?id=#{params[:id]}")
       @issues_info = HTTParty.get(HOST_API + "/github/issues_info?id=#{params[:id]}")
+      @issues_aggregate = HTTParty.get(HOST_API + "/github/issues_aggregate?id=#{params[:id]}")
       @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
       @commits_trend = HTTParty.get(HOST_API + "/github/commits_trend?id=#{params[:id]}")
     end
@@ -252,6 +268,11 @@ class VizApp < Sinatra::Base
         version_downloads_days(@doc['version_downloads_days']).to_json
       end
 
+      get '/version_downloads_days_aggregate' do
+        content_type :json
+        version_downloads_days_aggregate(@doc['version_downloads_days']).to_json
+      end
+
       get '/version_downloads_stack' do
         content_type :json
         version_downloads_stack(@doc['version_downloads']).to_json
@@ -267,6 +288,11 @@ class VizApp < Sinatra::Base
       get '/issues_info' do
         content_type :json
         issues_info(@doc['issues_info']).to_json
+      end
+
+      get '/issues_aggregate' do
+        content_type :json
+        issues_aggregate(@doc['issues_info']).to_json
       end
 
       get '/commit_week_day' do
