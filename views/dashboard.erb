@@ -33,11 +33,19 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <style>
+        @media(min-width: 1800px) {
+            .custom-pull-right {
+                float: right !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <div id="wrapper">
+        <!--
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
@@ -51,11 +59,11 @@
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
-            </div>
+            <!-- </div> -->
             <!-- /.navbar-static-side -->
-        </nav>
+        <!-- </nav> -->
 
-        <div id="page-wrapper">
+        <div style="margin-left: 3%; margin-right: 3%;">
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" style="color: #5c5c5c;"><%= @doc['name'] %></h1>
@@ -75,6 +83,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['version_downloads'].last['number'] %></div>
                                     <div>Latest</div>
+                                    <span class="label" style="background-color: #353835;">Source: RubyGems</span>
                                 </div>
                             </div>
                         </div>
@@ -98,6 +107,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['total_downloads'] %></div>
                                     <div>Downloads</div>
+                                    <span class="label" style="background-color: #353835;">Source: RubyGems</span>
                                 </div>
                             </div>
                         </div>
@@ -120,6 +130,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['stars'] %></div>
                                     <div>Stars</div>
+                                    <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
@@ -142,6 +153,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['forks'] %></div>
                                     <div>Forks</div>
+                                    <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
@@ -164,6 +176,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['ranking'] %></div>
                                     <div>Ranking</div>
+                                    <span class="label" style="background-color: #353835;">Source: The Ruby Toolbox</span>
                                 </div>
                             </div>
                         </div>
@@ -186,6 +199,7 @@
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['commits'] %></div>
                                     <div>Commits</div>
+                                    <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
@@ -204,26 +218,7 @@
                 <div class="col-lg-8">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads Trend for given versions
-                            <div class="pull-right">
-                                <!-- <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#">Action</a>
-                                        </li>
-                                        <li><a href="#">Another action</a>
-                                        </li>
-                                        <li><a href="#">Something else here</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a>
-                                        </li>
-                                    </ul>
-                                </div> -->
-                            </div>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads Trend for given versions <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -232,58 +227,9 @@
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
-                    <div class="panel panel-info">
+                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Commits Trend
-                            <div class="pull-right">
-                                <!-- <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#">Action</a>
-                                        </li>
-                                        <li><a href="#">Another action</a>
-                                        </li>
-                                        <li><a href="#">Something else here</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a>
-                                        </li>
-                                    </ul>
-                                </div> -->
-                            </div>
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="stockline-commits"></div>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <!-- /.panel -->
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads for each version
-                            <div class="pull-right">
-                                <!-- <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                        Actions
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right" role="menu">
-                                        <li><a href="#">Action</a>
-                                        </li>
-                                        <li><a href="#">Another action</a>
-                                        </li>
-                                        <li><a href="#">Something else here</a>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li><a href="#">Separated link</a>
-                                        </li>
-                                    </ul>
-                                </div> -->
-                            </div>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads for each version <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -297,7 +243,18 @@
                     <!-- /.panel -->
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-question fa-fw"></i> Issue Resolution
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Commits Trend <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="stockline-commits"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                   <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-question fa-fw"></i> Issue Resolution <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -308,7 +265,7 @@
                     <!-- /.panel -->
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-file-text-o fa-fw"></i> README
+                            <i class="fa fa-file-text-o fa-fw"></i> README <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -324,17 +281,17 @@
                         <div class="col-lg-6">
                             <div class="panel panel-info">
                                 <div class="panel-heading">
-                                    <i class="fa fa-code fa-fw"></i> Last Commit
+                                    <i class="fa fa-code fa-fw"></i> Last Commit <span class="custom-pull-right label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                                 <div class="panel-body">
-                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days ago</div>
+                                    <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['last_commit'] %> days</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="panel panel-info">
                                 <div class="panel-heading">
-                                    <i class="fa fa-question fa-fw"></i> Opening Issues
+                                    <i class="fa fa-question fa-fw"></i> Opening Issues <span class="custom-pull-right label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                                 <div class="panel-body">
                                     <div class="mid text-center" style="color: #5c5c5c;"><%= @doc['issues'] %> issues</div>
@@ -344,7 +301,7 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-graduation-cap fa-fw"></i> Contributors
+                            <i class="fa fa-graduation-cap fa-fw"></i> Contributors <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -361,7 +318,7 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-code fa-fw"></i> Contributions
+                            <i class="fa fa-code fa-fw"></i> Contributions <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -371,7 +328,17 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-rss fa-fw"></i> Dependencies
+                            <i class="fa fa-clock-o fa-fw"></i> Commits in Days of Week <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="commits-days-week"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-rss fa-fw"></i> Dependencies <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -391,16 +358,6 @@
                                     </a>
                                 <% end %>
                             </div>
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <i class="fa fa-clock-o fa-fw"></i> Commits in Days of Week
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="commits-days-week"></div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -657,7 +614,7 @@
                     margin: [60, 10, 80, 50]
                 },
                 title: {
-                    text: 'Commits Distribution in last year',
+                    text: 'Commits Distribution last year',
                     align: 'left',
                     x: 40
                 },
