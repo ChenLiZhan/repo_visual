@@ -242,6 +242,17 @@ module VizHelper
     commits_transform
   end
 
+  def commits_trend(data)
+    commits_days = [] 
+    data.each do |row|
+      row['days'].each_with_index do |value, index|
+        commits_days << [(row['week'] + 86400 * index) * 1000, value]
+      end
+    end
+
+    commits_days
+  end
+
   def issues_info(data)
     data.map! do |row|
       [row['number'], row['duration']]
