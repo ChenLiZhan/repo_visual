@@ -45,24 +45,6 @@
 <body>
 
     <div id="wrapper">
-        <!--
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
-                            <a href="#"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="/gems"><i class="fa fa-table fa-fw"></i> Gems</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            <!-- </div> -->
-            <!-- /.navbar-static-side -->
-        <!-- </nav> -->
-
         <div style="margin-left: 3%; margin-right: 3%;">
             <div class="row">
                 <div class="col-lg-12">
@@ -223,6 +205,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Zoom through clicking the button, modifying the dates or selecting the region by handlers</div>
                             <div id="stockline-downloads"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -235,6 +218,7 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="row">
+                                <div class="text-center"><i class="fa fa-hand-o-right"></i> Click on the bars to drilldown minor & patch version</div>
                                 <div id="nest-drilldown"></div>                                
                             </div>
                             <!-- /.row -->
@@ -248,6 +232,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Zoom through clicking the button, modifying the dates or selecting the region by handlers</div>
                             <div id="stockline-commits"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -255,10 +240,11 @@
                     <!-- /.panel -->
                    <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-question fa-fw"></i> Repo issue resolution <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                            <i class="fa fa-question fa-fw"></i> Repo issues resolution <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Resolution time for issues opened in the given month</div>
                             <div id="issues-boxplot"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -323,6 +309,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Mouse over to see number of commits (Day / Month)</div>
                             <div id="contribution-heatmap"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -691,7 +678,7 @@
                 tooltip: {
                     useHTML: true,
                     formatter: function() {
-                        return 'Max: <b>' + this.y + '</b><br>Q3: <b>' + this.point.q3 + '</b><br>Median: <b>' + this.point.median + '</b><br>Q1: <b>' + this.point.q1 + '</b><br>Min: <b>' + this.point.low + '</b><br>';
+                        return '<b>Days to Resolve</b> <br> Maximum: <b>' + this.y + '</b><br>Upper quartile: <b>' + this.point.q3 + '</b><br>Median: <b>' + this.point.median + '</b><br>Lower quartile: <b>' + this.point.q1 + '</b><br>Minimum: <b>' + this.point.low + '</b><br>';
                     }
                 },
                 series: [{
