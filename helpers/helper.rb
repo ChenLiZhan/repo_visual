@@ -164,13 +164,13 @@ module VizHelper
 
   def commit_week_day(data)
     commit_week_day = {
-      'Sunday'    => 0,
       'Monday'    => 0,
       'Tuesday'   => 0,
       'Wednesday' => 0,
       'Thursday'  => 0,
       'Friday'    => 0,
-      'Saturday'  => 0
+      'Saturday'  => 0,
+      'Sunday'    => 0
     }
     data.each do |row|
       commit_week_day['Sunday'] += row['days'][0]

@@ -45,28 +45,11 @@
 <body>
 
     <div id="wrapper">
-        <!--
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
-                        <li>
-                            <a href="#"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="/gems"><i class="fa fa-table fa-fw"></i> Gems</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            <!-- </div> -->
-            <!-- /.navbar-static-side -->
-        <!-- </nav> -->
-
         <div style="margin-left: 3%; margin-right: 3%;">
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header" style="color: #5c5c5c;"><%= @doc['name'] %></h1>
+                    <h4 style="color: #5c5c5c;">The Dashboard for Ruby Gem: <a href="https://rubygems.org/gems/<%= @doc['name'] %>"><%= @doc['name'] %></a></h4>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -82,12 +65,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['version_downloads'].last['number'] %></div>
-                                    <div>Latest</div>
+                                    <div>Latest version</div>
                                     <span class="label" style="background-color: #353835;">Source: RubyGems</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://rubygems.org/gems/<%= @doc['name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -106,12 +89,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['total_downloads'] %></div>
-                                    <div>Downloads</div>
+                                    <div>Total Gem's Downloads</div>
                                     <span class="label" style="background-color: #353835;">Source: RubyGems</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://rubygems.org/gems/<%= @doc['name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -129,12 +112,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['stars'] %></div>
-                                    <div>Stars</div>
+                                    <div>Repo Stars</div>
                                     <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://github.com/<%= @doc['repo_username'] %>/<%= @doc['repo_name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -152,12 +135,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['forks'] %></div>
-                                    <div>Forks</div>
+                                    <div>Repo Forks</div>
                                     <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://github.com/<%= @doc['repo_username'] %>/<%= @doc['repo_name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -175,12 +158,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['ranking'] %></div>
-                                    <div>Ranking</div>
+                                    <div>Community Score</div>
                                     <span class="label" style="background-color: #353835;">Source: The Ruby Toolbox</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://www.ruby-toolbox.com/projects/<%= @doc['name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -198,12 +181,12 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"><%= @doc['commits'] %></div>
-                                    <div>Commits</div>
+                                    <div>Repo Commits</div>
                                     <span class="label" style="background-color: #353835;">Source: GitHub</span>
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="https://github.com/<%= @doc['repo_username'] %>/<%= @doc['repo_name'] %>">
                             <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -218,10 +201,11 @@
                 <div class="col-lg-8">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads Trend for given versions <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Gem downloads aggregated by minor version <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Zoom through clicking the button, modifying the dates or selecting the region by handlers</div>
                             <div id="stockline-downloads"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -229,11 +213,12 @@
                     <!-- /.panel -->
                      <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Downloads for each version <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Gem Downloads break down by version <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="row">
+                                <div class="text-center"><i class="fa fa-hand-o-right"></i> Click on the bars to drilldown minor & patch version</div>
                                 <div id="nest-drilldown"></div>                                
                             </div>
                             <!-- /.row -->
@@ -243,10 +228,11 @@
                     <!-- /.panel -->
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Commits Trend <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Repo commits trend <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Zoom through clicking the button, modifying the dates or selecting the region by handlers</div>
                             <div id="stockline-commits"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -254,10 +240,11 @@
                     <!-- /.panel -->
                    <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-question fa-fw"></i> Issue Resolution <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                            <i class="fa fa-question fa-fw"></i> Repo issues resolution <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Resolution time for issues opened in the given month</div>
                             <div id="issues-boxplot"></div>
                         </div>
                         <!-- /.panel-body -->
@@ -265,7 +252,7 @@
                     <!-- /.panel -->
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-file-text-o fa-fw"></i> README <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                            <i class="fa fa-file-text-o fa-fw"></i> Repo README word cloud <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -322,13 +309,14 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
+                            <div class="text-center"><i class="fa fa-hand-o-right"></i> Mouse over to see number of commits(Day / Month)</div>
                             <div id="contribution-heatmap"></div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-clock-o fa-fw"></i> Commits in Days of Week <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
+                            <i class="fa fa-clock-o fa-fw"></i> Repo commits by days of week <span class="pull-right label" style="background-color: #353835;">Source: GitHub</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -338,7 +326,7 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <i class="fa fa-rss fa-fw"></i> Dependencies <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
+                            <i class="fa fa-rss fa-fw"></i> Gem dependencies <span class="pull-right label" style="background-color: #353835;">Source: RubyGems</span>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -439,7 +427,7 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'Downloads'
+                    text: ''
                 },
                 xAxis: {
                     type: 'category'
@@ -517,7 +505,7 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'Downloads'
+                    text: ''
                 },
                 xAxis: {
                     type: 'category'
@@ -566,7 +554,7 @@
                     type: 'column'
                 },
                 title: {
-                    text: 'Commit in days of week'
+                    text: ''
                 },
                 xAxis: {
                     type: 'category',
@@ -614,9 +602,7 @@
                     margin: [60, 10, 80, 50]
                 },
                 title: {
-                    text: 'Commits Distribution last year',
-                    align: 'left',
-                    x: 40
+                    text: ''
                 },
                 xAxis: {
                     type: 'category',
@@ -672,7 +658,7 @@
                 },
 
                 title: {
-                    text: 'Issues Resolution'
+                    text: ''
                 },
 
                 legend: {
@@ -685,14 +671,14 @@
 
                 yAxis: {
                     title: {
-                        text: 'Days'
+                        text: 'Days to resolve'
                     },
                     min: 0
                 },
                 tooltip: {
                     useHTML: true,
                     formatter: function() {
-                        return 'Max: <b>' + this.y + '</b><br>Q3: <b>' + this.point.q3 + '</b><br>Median: <b>' + this.point.median + '</b><br>Q1: <b>' + this.point.q1 + '</b><br>Min: <b>' + this.point.low + '</b><br>';
+                        return '<b>Days to Resolve</b> <br> Maximum: <b>' + this.y + '</b><br>Upper quartile: <b>' + this.point.q3 + '</b><br>Median: <b>' + this.point.median + '</b><br>Lower quartile: <b>' + this.point.q1 + '</b><br>Minimum: <b>' + this.point.low + '</b><br>';
                     }
                 },
                 series: [{

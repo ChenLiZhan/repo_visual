@@ -88,6 +88,8 @@ class VizApp < Sinatra::Base
             @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
             @stackoverflow = Repos::StackOverflow.new(gem_name)
             gems['name'] = gem_name
+            gems['repo_name'] = repo_name
+            gems['repo_username'] = username
             ws.send("There are #{tasks.length} tasks to be done")
         else
           case step.to_s.to_i
