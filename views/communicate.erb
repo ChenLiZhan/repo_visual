@@ -26,7 +26,7 @@
           if (msg.data.match(/^(There)/)) {
             ws.send(1);
           } else {
-            append_li('click <a href="/' + msg.data + '">here</a> to check the visualizations');
+            append_li('click <a href="/dashboard/' + msg.data + '">here</a> to check the visualizations');
           }
         } else {
           step = parseInt(msg.data) + 1;
