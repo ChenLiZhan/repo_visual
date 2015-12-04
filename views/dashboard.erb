@@ -261,6 +261,27 @@
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock-o fa-fw"></i> Questions Views <span class="pull-right label" style="background-color: #353835;">Source: Stackoverflow</span>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="question-views"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-file-text-o fa-fw"></i> Questions word cloud <span class="pull-right label" style="background-color: #353835;">Source: Stackoverflow</span>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="questions-word-cloud" style="width:100%"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
                 </div>
                 <!-- /.col-lg-8 -->
                 <div class="col-lg-4">
@@ -391,6 +412,7 @@
         var version_downloads_days_aggregate = <%= @version_downloads_days_aggregate.to_json %> ;
         var version_downloads_nest_drilldown = <%= @version_downloads_nest_drilldown.to_json %> ;
         var commit_week_day = <%= @commit_week_day.to_json %>;
+        var question_views = <%= @question_views.to_json %>;
         var commits_month_day = <%= @commits_month_day.to_json %>;
         var commits_trend = <%= @commits_trend.to_json %>;
         var issues_info = <%= @issues_info.to_json %>;
@@ -549,6 +571,50 @@
                   series: version_downloads_nest_drilldown[1]
                 }
             })
+
+            $('#question-views').highcharts({
+                chart:{
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    type: 'category',
+                    labels: {
+                        rotation: -45,
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Views'
+                    }
+                },
+                series: [{
+                    name: 'Views',
+                    data: question_views,
+                    color: '#F8E7B3',
+                    dataLabels: {
+                        enabled: true,
+                        rotation: -90,
+                        color: '#FFFFFF',
+                        align: 'right',
+                        format: '{point.y}', // one decimal
+                        y: 10, // 10 pixels down from the top
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                }]
+
+            })
+
             $('#commits-days-week').highcharts({
                 chart: {
                     type: 'column'
@@ -692,16 +758,18 @@
             });
         });
 
-        var frequency_list = <%= @readme_word_count.to_json %>
-
+        var readme_frequency_list = <%= @readme_word_count.to_json %>
+        
         var color = d3.scale.linear()
             .domain([0,1,2,3,4,5,6,10,15,20,100])
-            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"].reverse());
 
+        
+        /* Readme word Cloud ************************************************/
         d3.layout.cloud().size([800, 300]) //width, height
-            .words(frequency_list)
+            .words(readme_frequency_list)
             .rotate(0)
-            .fontSize(function(d) { return d.size*2; })
+            .fontSize(function(d) { return d.size*7; })
             .on("end", draw)
             .start();
 
@@ -713,7 +781,8 @@
             .append("g")
             // without the transform, words words would get cutoff to the left and top, they would
             // appear outside of the SVG area
-            .attr("transform", "translate(320,100)")
+            //modify the postition of the cloud on the canvas 
+            .attr("transform", "translate(320,200)")
             .selectAll("text")
             .data(words)
             .enter().append("text")
@@ -725,6 +794,44 @@
             .text(function(d) { return d.text; });
         }
 
+    </script>
+
+    <script>
+        var questions_frequency_list = <%= @question_word_count.to_json %>
+
+        var color = d3.scale.linear()
+            .domain([0,1,2,3,4,5,6,10,15,20,100])
+            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"].reverse());
+
+        
+        /* Readme word Cloud ************************************************/
+        d3.layout.cloud().size([800, 300]) //width, height
+            .words(questions_frequency_list)
+            .rotate(0)
+            .fontSize(function(d) { return d.size*7; })
+            .on("end", draw)
+            .start();
+
+        function draw(words) {
+          d3.select("#questions-word-cloud").append("svg")
+            .attr("width", 850)
+            .attr("height", 350)
+            .attr("class", "wordcloud")
+            .append("g")
+            // without the transform, words words would get cutoff to the left and top, they would
+            // appear outside of the SVG area
+            //modify the postition of the cloud on the canvas 
+            .attr("transform", "translate(320,200)") //old 320,100
+            .selectAll("text")
+            .data(words)
+            .enter().append("text")
+            .style("font-size", function(d) { return d.size + "px"; })
+            .style("fill", function(d, i) { return color(i); })
+            .attr("transform", function(d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+            })
+            .text(function(d) { return d.text; });
+        }
     </script>
 
     <script src="/dashboard/javascripts/scripts.js"></script>
