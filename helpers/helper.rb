@@ -2,6 +2,7 @@ module VizHelper
 
   def question_word_count(data)
     question_title_word_count = []
+    question_title_word_count_scaled = []
     aggregate =  data.aggregate([
       {"$project" => {"questions.title": 1, _id: 0}},
       {"$unwind" => "$questions" },
@@ -11,23 +12,65 @@ module VizHelper
       ])
 
     aggregate.each do |row|
-      question_title_word_count << { "text" => row['_id']['title'], "size" =>row['count']}
+      if row['count'] > 1
+        question_title_word_count << { "text" => row['_id']['title'], "size" =>row['count']}
+      end
     end
 
-    question_title_word_count
+    #scaling for question word cloud
+    question_title_word_count = question_title_word_count.reverse
+    
+    newMax = 10.0
+    newMin = 1.0
+    firstword = question_title_word_count.first
+    lastword = question_title_word_count.last
+
+    oldRange = question_title_word_count.last['size'].to_i - question_title_word_count.first['size'].to_i
+    newRange = newMax - newMin
+
+    question_title_word_count_scaled <<  {"text"=>firstword['text'], "size"=>1}
+    question_title_word_count.slice(1..-2).each do |word|
+      newValue = (((word['size'].to_i - question_title_word_count.first['size'].to_i) * newRange)/oldRange) + newMin
+      question_title_word_count_scaled << {"text"=>word['text'],"size"=> newValue}
+    end
+    question_title_word_count_scaled << {"text"=>lastword['text'], "size"=>10}
+    
+    question_title_word_count_scaled
   end
 
   def readme_word_count(data)
     readme_word_count = []
+    readme_word_count_scaled = []
     data.each do |row|
-      readme_word_count << {"text" => row[0], "size" => row[1]}
+      if row[1].to_i > 1
+        readme_word_count << {"text" => row[0], "size" => row[1]}
+      end
     end
-    readme_word_count
+
+    #scaling for word cloud
+    readme_word_count = readme_word_count.reverse
+    
+    newMax = 10.0
+    newMin = 1.0
+    firstword = readme_word_count.first
+    lastword = readme_word_count.last
+
+    oldRange = readme_word_count.last['size'].to_i - readme_word_count.first['size'].to_i
+    newRange = newMax - newMin
+
+    readme_word_count_scaled <<  {"text"=>firstword['text'], "size"=>1}
+    readme_word_count.slice(1..-2).each do |word|
+      newValue = (((word['size'].to_i - readme_word_count.first['size'].to_i) * newRange)/oldRange) + newMin
+      readme_word_count_scaled << {"text"=>word['text'],"size"=> newValue}
+    end
+    readme_word_count_scaled << {"text"=>lastword['text'], "size"=>10}
+
+    readme_word_count_scaled
   end
 
   def question_views(data)
     questions_hash = {}
-    data.each do |row|
+    data.reverse.each do |row|
       questions_hash[Time.at(row['creation_date'].to_i).strftime("%m-%d-%Y")] = row['views']
     end
 

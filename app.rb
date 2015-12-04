@@ -160,10 +160,6 @@ class VizApp < Sinatra::Base
   get '/stackoverflow/:id' do
     @question_views = HTTParty.get(HOST_API + "/stackoverflow/question_views?id=#{params[:id]}")
     @question_word_count = HTTParty.get(HOST_API + "/stackoverflow/question_titles?id=#{params[:id]}")
-    #puts @question_word_count
-    #@readme_word_count = HTTParty.get('http://localhost:4567/api/v1/stackoverflow/readme_word_count')
-    #puts @readme_word_count
-    
     erb :stackoverflow
   end
 
@@ -196,6 +192,11 @@ class VizApp < Sinatra::Base
     @issues_aggregate = HTTParty.get(HOST_API + "/github/issues_aggregate?id=#{params[:id]}")
     @readme_word_count = HTTParty.get(HOST_API + "/github/readme_word_count?id=#{params[:id]}")
     @commits_trend = HTTParty.get(HOST_API + "/github/commits_trend?id=#{params[:id]}")
+    @question_views = HTTParty.get(HOST_API + "/stackoverflow/question_views?id=#{params[:id]}").map do |data|
+      [data[0],data[1]]
+    end
+    @question_word_count = HTTParty.get(HOST_API + "/stackoverflow/question_titles?id=#{params[:id]}")
+
     erb :dashboard
   end
 
@@ -286,11 +287,10 @@ class VizApp < Sinatra::Base
       end
     end
 
-    namespace 'stackoverflow' do
+    namespace '/stackoverflow' do
       get '/question_views' do
         content_type :json
-        question_views = question_views(@doc['questions'])
-        question_views.to_json
+        question_views(@doc['questions']).to_json
       end
 
       get '/question_titles' do
