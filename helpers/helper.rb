@@ -3,17 +3,10 @@ module VizHelper
   def question_word_count(data)
     question_title_word_count = []
     question_title_word_count_scaled = []
-    aggregate =  data.aggregate([
-      {"$project" => {"questions.title": 1, _id: 0}},
-      {"$unwind" => "$questions" },
-      {"$unwind" => "$questions.title" },
-      {"$group" => {_id: "$questions", count: {"$sum" => 1}}},
-      {"$sort" => {count: -1}},
-      ])
 
-    aggregate.each do |row|
-      if row['count'] > 1
-        question_title_word_count << { "text" => row['_id']['title'], "size" =>row['count']}
+    data.each do |row|
+      if row[1].to_i > 1
+        question_title_word_count << { "text" => row[0], "size" =>row[1]}
       end
     end
 

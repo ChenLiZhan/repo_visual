@@ -136,7 +136,7 @@ class VizApp < Sinatra::Base
               gems['ranking'] = @ruby_toolbox.get_ranking
               ws.send(14)
             when 15
-              gems['questions'] = @stackoverflow.get_questions
+              gems['questions'], gems['questions_word_count'] = @stackoverflow.get_questions
               gems['created_at'] = DateTime.now
               ws.send(15)
             when 16
@@ -295,7 +295,7 @@ class VizApp < Sinatra::Base
 
       get '/question_titles' do
         content_type :json
-        question_word_count = question_word_count(client['gems'])
+        question_word_count = question_word_count(@doc['questions_word_count'])
         question_word_count.to_json
       end
     end
