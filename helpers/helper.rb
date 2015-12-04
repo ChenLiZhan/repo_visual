@@ -17,7 +17,7 @@ module VizHelper
       end
     end
 
-    #scaling for word cloud
+    #scaling for question word cloud
     question_title_word_count = question_title_word_count.reverse
     
     newMax = 10.0
