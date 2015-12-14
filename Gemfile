@@ -16,3 +16,4 @@ gem 'websocket-client-simple'
 gem 'puma'
 
 gem 'redis'
+gem 'sidekiq'
