@@ -7,9 +7,12 @@ require 'date'
 require 'faye/websocket'
 require 'nokogiri'
 require 'open-uri'
+require 'sidekiq'
 
 require_relative './helpers/helper.rb'
 require_relative './lib/repo_miner/lib/repos.rb'
+require_relative './workers/repo_worker.rb'
+require_relative './config/initializers/sidekiq.rb'
 
 class VizApp < Sinatra::Base
   register Sinatra::Namespace
@@ -50,6 +53,10 @@ class VizApp < Sinatra::Base
         @doc = documents.last
       end
     end
+  end
+
+  get '/collect' do
+    RepoWorker.perform_async
   end
 
   get '/communicate' do
