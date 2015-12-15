@@ -56,7 +56,22 @@ class VizApp < Sinatra::Base
   end
 
   get '/collect' do
-    RepoWorker.perform_async
+    RepoWorker.perform_async('basic_information', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('last_year_commit_activity', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('contributors', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('commits', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('forks', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('stars', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('issues', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('issues_info', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('last_commit', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('readme_word_count', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('version_downloads', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('version_downloads_days', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('dependencies', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('total_downloads', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('ranking', 'YorickPeterse', 'oga', 'oga')
+    RepoWorker.perform_async('questions', 'YorickPeterse', 'oga', 'oga')
   end
 
   get '/communicate' do
@@ -101,7 +116,7 @@ class VizApp < Sinatra::Base
         else
           case step.to_s.to_i
             when 1
-              gems['commit_activity_last_year'] = @github.get_last_year_commit_activity    
+              gems['commit_activity_last_year'] = @github.get_last_year_commit_activity
               ws.send(1)
             when 2
               gems['contributors'] = @github.get_contributors
