@@ -7,7 +7,7 @@ require_relative '../lib/repo_miner/lib/repos.rb'
 class RepoWorker
   include Sidekiq::Worker
 
-  def perform(step, repo_username, repo_name, gem_name)
+  def perform(step, repo_username, repo_name, gem_name, channel)
     client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
     @gems = client[:gems]
     @github = Repos::GithubData.new(repo_username, repo_name)
@@ -15,16 +15,16 @@ class RepoWorker
     @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
     @stackoverflow = Repos::StackOverflow.new(gem_name)
     send("fetch_and_save_#{step}", repo_username, repo_name, gem_name)
-    # if step == 'basic_information'
-    # else
-    #   send("fetch_and_save_#{step}", repo_username, repo_name, gem_name)
-    # end
 
+    publish(channel, step)
+  end
+
+  def publish(channel, data)
     HTTParty.post('http://localhost:4567/faye', {
         :headers  => { 'Content-Type' => 'application/json' },
         :body    => {
-            'channel'   => '/foo',
-            'data'      => step
+            'channel'   => "/#{channel}",
+            'data'      => data
         }.to_json
     })
   end

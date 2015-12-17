@@ -9,6 +9,7 @@ require 'faye'
 require 'nokogiri'
 require 'open-uri'
 require 'sidekiq'
+require 'digest/sha1'
 
 require_relative './helpers/helper.rb'
 require_relative './lib/repo_miner/lib/repos.rb'
@@ -58,29 +59,29 @@ class VizApp < Sinatra::Base
   end
 
   get '/collect' do
+    @channel = Digest::SHA1.hexdigest(headers.to_s)
 
     erb :collect
   end
 
-  post '/collect' do
-    RepoWorker.perform_async('basic_information', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('last_year_commit_activity', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('contributors', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('commits', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('forks', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('stars', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('issues', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('issues_info', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('last_commit', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('readme_word_count', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('version_downloads', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('version_downloads_days', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('dependencies', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('total_downloads', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('ranking', 'YorickPeterse', 'oga', 'oga')
-    RepoWorker.perform_async('questions', 'YorickPeterse', 'oga', 'oga')
-
-    redirect '/collect'
+  post '/dig' do
+    channel = params[:channel]
+    RepoWorker.perform_async('basic_information', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('last_year_commit_activity', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('contributors', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('commits', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('forks', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('stars', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('issues', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('issues_info', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('last_commit', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('readme_word_count', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('version_downloads', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('version_downloads_days', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('dependencies', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('total_downloads', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('ranking', 'YorickPeterse', 'oga', 'oga', channel)
+    RepoWorker.perform_async('questions', 'YorickPeterse', 'oga', 'oga', channel)
   end
 
   get '/communicate' do
