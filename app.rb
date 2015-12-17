@@ -66,22 +66,26 @@ class VizApp < Sinatra::Base
 
   post '/dig' do
     channel = params[:channel]
-    RepoWorker.perform_async('basic_information', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('last_year_commit_activity', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('contributors', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('commits', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('forks', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('stars', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('issues', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('issues_info', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('last_commit', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('readme_word_count', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('version_downloads', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('version_downloads_days', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('dependencies', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('total_downloads', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('ranking', 'YorickPeterse', 'oga', 'oga', channel)
-    RepoWorker.perform_async('questions', 'YorickPeterse', 'oga', 'oga', channel)
+    repo_username = params[:repoUsername]
+    repo_name = params[:repoName]
+    gem_name = params[:gemName]
+
+    RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel)
   end
 
   get '/communicate' do

@@ -6,6 +6,15 @@
 </head>
 <body>
   <form>
+    <label for="repo-username">Repo Username</label>
+    <input type="text" name="repo-username" id="repo-username">
+    <br>
+    <label for="repo-name">Repo Name</label>
+    <input type="text" name="repo-name" id="repo-name">
+    <br>
+    <label for="gem-name">Gem Name</label>
+    <input type="text" name="gem-name" id="gem-name">
+    <br>
     <input type="hidden" id="channel" name="channel" value="<%= @channel %>">
     <button type="submit" id="submit">submit</button>
   </form>
@@ -25,11 +34,15 @@
 
     $('#submit').click(function(e) {
       e.preventDefault();
+
       $.ajax({
         url: '/dig',
         type: 'POST',
         data: {
-          channel: $('#channel').val()
+          channel: $('#channel').val(),
+          repoUsername: $('#repo-username').val(),
+          repoName: $('#repo-name').val(),
+          gemName: $('#gem-name').val()
         },
         success: function() {
           console.log('submit success');
