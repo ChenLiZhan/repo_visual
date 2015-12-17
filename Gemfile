@@ -11,7 +11,8 @@ gem "github_api"
 gem 'configuration'
 gem 'nokogiri'
 
-gem 'faye-websocket', require: 'faye/websocket'
+# gem 'faye-websocket', require: 'faye/websocket'
+gem 'faye'
 gem 'websocket-client-simple'
 gem 'puma'
 

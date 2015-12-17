@@ -4,7 +4,8 @@ require 'chartkick'
 require 'mongo'
 require 'httparty'
 require 'date'
-require 'faye/websocket'
+# require 'faye/websocket'
+require 'faye'
 require 'nokogiri'
 require 'open-uri'
 require 'sidekiq'
@@ -18,7 +19,8 @@ class VizApp < Sinatra::Base
   register Sinatra::Namespace
   helpers VizHelper
 
-  Faye::WebSocket.load_adapter('puma')
+  # Faye::WebSocket.load_adapter('puma')
+
   set :server, 'puma'
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
   HOST_API = 'http://localhost:4567/api/v1'
@@ -56,6 +58,11 @@ class VizApp < Sinatra::Base
   end
 
   get '/collect' do
+
+    erb :collect
+  end
+
+  post '/collect' do
     RepoWorker.perform_async('basic_information', 'YorickPeterse', 'oga', 'oga')
     RepoWorker.perform_async('last_year_commit_activity', 'YorickPeterse', 'oga', 'oga')
     RepoWorker.perform_async('contributors', 'YorickPeterse', 'oga', 'oga')
@@ -72,6 +79,8 @@ class VizApp < Sinatra::Base
     RepoWorker.perform_async('total_downloads', 'YorickPeterse', 'oga', 'oga')
     RepoWorker.perform_async('ranking', 'YorickPeterse', 'oga', 'oga')
     RepoWorker.perform_async('questions', 'YorickPeterse', 'oga', 'oga')
+
+    redirect '/collect'
   end
 
   get '/communicate' do
