@@ -18,3 +18,5 @@ gem 'puma'
 
 gem 'redis'
 gem 'sidekiq'
+
+gem 'repocrawler'
