@@ -29,7 +29,7 @@ class VizApp < Sinatra::Base
     documents = []
     client[:gems].find.each do |document|
       documents << document
-    end      
+    end
 
     @collection = client['gems']
     @doc = documents
@@ -41,7 +41,7 @@ class VizApp < Sinatra::Base
         documents = []
         client[:gems].find.each do |document|
           documents << document
-        end      
+        end
 
         @collection = client['gems']
         @doc = documents.last
@@ -64,27 +64,36 @@ class VizApp < Sinatra::Base
   end
 
   post '/dig' do
+    # gem_req = GemRequest.new(params)
+
     channel = params[:channel]
     repo_username = params[:repoUsername]
     repo_name = params[:repoName]
     gem_name = params[:gemName]
 
-    RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel)
-    RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel)
+    tasks = ['basic_information', 'last_year_commit_activity', 'contributors',
+      'commits', 'forks', 'stars', 'issues', 'issues_info', 'last_commit',
+      'readme_word_count', 'version_downloads', 'version_downloads_days',
+      'dependencies', 'total_downloads', 'ranking', 'questions']
+
+    tasks.each { |task| RepoWorker.perform_async(task, repo_username, repo_name, gem_name, channel) }
+
+    # RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel)
+    # RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel)
   end
 
   get '/stackoverflow/:id' do
@@ -151,7 +160,7 @@ class VizApp < Sinatra::Base
             end
           end
           version['downloads_date'].each do |date, count|
-            dates[date] = count 
+            dates[date] = count
           end
           {'number' => version['number'], 'downloads_date' => dates}
         end
