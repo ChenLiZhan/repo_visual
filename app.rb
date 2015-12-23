@@ -4,18 +4,23 @@ require 'chartkick'
 require 'mongo'
 require 'httparty'
 require 'date'
-require 'faye/websocket'
+# require 'faye/websocket'
+require 'faye'
 require 'nokogiri'
 require 'open-uri'
+require 'sidekiq'
+require 'digest/sha1'
 
 require_relative './helpers/helper.rb'
-require_relative './lib/repo_miner/lib/repos.rb'
+require_relative './workers/repo_worker.rb'
+require_relative './config/initializers/sidekiq.rb'
 
 class VizApp < Sinatra::Base
   register Sinatra::Namespace
   helpers VizHelper
 
-  Faye::WebSocket.load_adapter('puma')
+  # Faye::WebSocket.load_adapter('puma')
+
   set :server, 'puma'
   client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
   HOST_API = 'http://localhost:4567/api/v1'
@@ -52,109 +57,34 @@ class VizApp < Sinatra::Base
     end
   end
 
-  get '/communicate' do
-    tasks = %w['last_year_commit_activity', 'contributors', 
-      'total_commits', 'forks', 'stars', 'issues', 'issues_info',
-      'last_commits_days', 'readme_word_count', 'version_downloads',
-      'version_downloads_trend', 'dependencies', 'total_downloads',
-      'ranking', 'questions']
+  get '/collect' do
+    @channel = Digest::SHA1.hexdigest(headers.to_s)
 
-    if Faye::WebSocket.websocket?(request.env)
-      ws = Faye::WebSocket.new(request.env)
+    erb :collect
+  end
 
-      ws.on(:open) do |event|
-        puts 'On Open'
-      end
+  post '/dig' do
+    channel = params[:channel]
+    repo_username = params[:repoUsername]
+    repo_name = params[:repoName]
+    gem_name = params[:gemName]
 
-      gems = {}
-      
-      ws.on(:message) do |msg|
-        step = msg.data.match(/^\d+/)
-        if step.nil?
-            gem_name = msg.data
-            document = open("https://rubygems.org/gems/#{gem_name}")
-            noko_document = Nokogiri::HTML(document)
-            links = noko_document.xpath("//div[@class='t-list__items']//a[@class='gem__link t-list__item']/@href")
-            username = ''
-            repo_name = ''
-            links[0..2].each do |link|
-              if link.value =~ /https?:\/\/github\.com/
-                username, repo_name = link.value.gsub(/https?:\/\/github.com\//, '').split('/')
-              end
-            end
-
-            @github = Repos::GithubData.new(username, repo_name)
-            @rubygems = Repos::RubyGemsData.new(gem_name)
-            @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
-            @stackoverflow = Repos::StackOverflow.new(gem_name)
-            gems['name'] = gem_name
-            gems['repo_name'] = repo_name
-            gems['repo_username'] = username
-            ws.send("There are #{tasks.length} tasks to be done")
-        else
-          case step.to_s.to_i
-            when 1
-              gems['commit_activity_last_year'] = @github.get_last_year_commit_activity    
-              ws.send(1)
-            when 2
-              gems['contributors'] = @github.get_contributors
-              ws.send(2)
-            when 3
-              gems['commits'] = @github.get_total_commits
-              ws.send(3)
-            when 4
-              gems['forks'] = @github.get_forks
-              ws.send(4)
-            when 5
-              gems['stars'] = @github.get_stars
-              ws.send(5)
-            when 6
-              gems['issues'] = @github.get_issues
-              ws.send(6)
-            when 7
-              gems['issues_info'] = @github.get_issues_info
-              ws.send(7)
-            when 8
-              gems['last_commit'] = @github.get_last_commits_days
-              ws.send(8)
-            when 9
-              gems['readme_word_count'] = @github.get_readme_word_count
-              ws.send(9)
-            when 10
-              gems['version_downloads'] = @rubygems.get_version_downloads
-              ws.send(10)
-            when 11
-              gems['version_downloads_days'] = @rubygems.get_version_downloads_trend
-              ws.send(11)
-            when 12
-              gems['dependencies'] = @rubygems.get_dependencies
-              ws.send(12)
-            when 13
-              gems['total_downloads'] = @rubygems.get_total_downloads
-              ws.send(13)
-            when 14
-              gems['ranking'] = @ruby_toolbox.get_ranking
-              ws.send(14)
-            when 15
-              gems['questions'], gems['questions_word_count'] = @stackoverflow.get_questions
-              gems['created_at'] = DateTime.now
-              ws.send(15)
-            when 16
-              puts gems
-              id = client[:gems].insert_one(gems).inserted_id
-              ws.send(id.to_s)
-          end
-        end
-      end
-
-      ws.on(:close) do |event|
-        puts 'On Close'
-      end
-
-      ws.rack_response
-    else
-      erb :communicate
-    end
+    RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel)
+    RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel)
   end
 
   get '/stackoverflow/:id' do
