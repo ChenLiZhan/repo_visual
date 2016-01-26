@@ -17,6 +17,7 @@
     <br>
     <input type="hidden" id="channel" name="channel" value="<%= @channel %>">
     <button type="submit" id="submit">submit</button>
+    <button type="submit" id="gems-list-submit">Get the info of a long list</button>
   </form>
   
   <ul id="job-list"></ul>
@@ -43,6 +44,21 @@
           repoUsername: $('#repo-username').val(),
           repoName: $('#repo-name').val(),
           gemName: $('#gem-name').val()
+        },
+        success: function() {
+          console.log('submit success');
+        }
+      })
+    });
+
+    $('#gems-list-submit').click(function(e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: '/list_digging',
+        type: 'POST',
+        data: {
+          channel: $('#channel').val(),
         },
         success: function() {
           console.log('submit success');

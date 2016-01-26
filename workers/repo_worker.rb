@@ -7,6 +7,7 @@ require 'repocrawler'
 
 class RepoWorker
   include Sidekiq::Worker
+  sidekiq_options :retry => 0 # no retry and then to the Dead Job Queue
 
   def perform(step, repo_username, repo_name, gem_name, channel)
     client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
