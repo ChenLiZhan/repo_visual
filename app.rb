@@ -73,7 +73,7 @@ class VizApp < Sinatra::Base
       all_gems << new_line
     end
 
-    prepared_gems = all_gems.take(50)
+    prepared_gems = all_gems.take(100)
 
     prepared_gems.each do |gem_info|
       repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
