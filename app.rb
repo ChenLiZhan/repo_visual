@@ -80,7 +80,8 @@ class VizApp < Sinatra::Base
       'github_password' => ENV['github_password'],
       'github_account' => ENV['github_account'],
       'user_agent' => ENV['user_agent'],
-      'stackoverflow_token' => ENV['stackoverflow_token']
+      'stackoverflow_token' => ENV['stackoverflow_token'],
+      'current_authority' => request.url.gsub(request.fullpath , '')
     }
     prepared_gems.each do |gem_info|
       repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
@@ -115,7 +116,8 @@ class VizApp < Sinatra::Base
       'github_password' => ENV['github_password'],
       'github_account' => ENV['github_account'],
       'user_agent' => ENV['user_agent'],
-      'stackoverflow_token' => ENV['stackoverflow_token']
+      'stackoverflow_token' => ENV['stackoverflow_token'],
+      'current_authority' => request.url.gsub(request.fullpath , '')
     }
     RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)

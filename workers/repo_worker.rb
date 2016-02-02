@@ -18,11 +18,11 @@ class RepoWorker
     @stackoverflow = Repos::StackOverflow.new(gem_name, config['stackoverflow_token'])
     send("fetch_and_save_#{step}", repo_username, repo_name, gem_name)
 
-    publish(channel, step)
+    publish(channel, step, config['current_authority'])
   end
 
-  def publish(channel, data)
-    HTTParty.post('http://localhost:4567/faye', {
+  def publish(channel, data, current_authority)
+    HTTParty.post(current_authority + '/faye', {
         :headers  => { 'Content-Type' => 'application/json' },
         :body    => {
             'channel'   => "/#{channel}",
