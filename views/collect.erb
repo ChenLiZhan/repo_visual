@@ -23,10 +23,11 @@
   <ul id="job-list"></ul>
 
   <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
-  <script type="text/javascript" src="http://localhost:4567/faye.js"></script>
+  <script type="text/javascript" src="<%= @current_authority %>/faye.js"></script>
   <script>
     var channel = <%= @channel.to_json %>;
-    var client = new Faye.Client('http://localhost:4567/faye');
+    var currentURL = "<%= @current_authority %>";
+    var client = new Faye.Client(currentURL + '/faye');
     client.subscribe('/' + channel, function(message) {
       // handle message
       console.log(message);

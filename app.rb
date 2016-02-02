@@ -60,7 +60,7 @@ class VizApp < Sinatra::Base
 
   get '/collect' do
     @channel = Digest::SHA1.hexdigest(headers.to_s)
-
+    @current_authority = request.url.gsub('/collect', '')
     erb :collect
   end
 
