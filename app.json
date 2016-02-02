@@ -1,0 +1,6 @@
+{
+  "name": "Repo Miner",
+  "description": "A web service responsible for collecting gems and presenting the information via dashboard.",
+  "repository": "https://github.com/ISS-RepoMiner/repo_visual",
+  "keywords": ["sinatra", "rubygems"]
+}
