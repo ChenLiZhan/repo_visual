@@ -185,11 +185,7 @@ class VizApp < Sinatra::Base
   end
 
   get '/' do
-    puts ENV['github_token']
-    puts ENV['github_password']
-    puts ENV['github_account']
-    puts ENV['user_agent']
-    puts ENV['stackoverflow_token']
+    erb :index
   end
 
   namespace '/api/v1' do
