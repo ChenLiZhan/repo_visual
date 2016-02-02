@@ -8,7 +8,7 @@ class RepoWorker
   include Sidekiq::Worker
   sidekiq_options :retry => 0 # no retry and then to the Dead Job Queue
 
-  @@client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info', :pool_size => 10)
+  @@client = Mongo::Client.new(ENV['mongodb_uri'], :max_pool_size => 10)
 
   def perform(step, repo_username, repo_name, gem_name, channel, config)
     @gems = @@client[:gems]

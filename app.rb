@@ -23,7 +23,7 @@ class VizApp < Sinatra::Base
   # Faye::WebSocket.load_adapter('puma')
 
   set :server, 'puma'
-  client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info', :min_pool_size => 35)
+  client = Mongo::Client.new(ENV['mongodb_uri'], :max_pool_size => 10)
   HOST_API = 'http://localhost:4567/api/v1'
 
   before '/gems' do
