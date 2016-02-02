@@ -2,7 +2,6 @@ require 'sidekiq'
 require 'redis'
 require 'mongo'
 require 'httparty'
-# require_relative '../lib/repo_miner/lib/repos.rb'
 require 'repocrawler'
 
 class RepoWorker
