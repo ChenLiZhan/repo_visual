@@ -8,7 +8,6 @@ gem 'httparty'
 
 gem "gems"
 gem "github_api"
-gem 'configuration'
 gem 'nokogiri'
 
 # gem 'faye-websocket', require: 'faye/websocket'

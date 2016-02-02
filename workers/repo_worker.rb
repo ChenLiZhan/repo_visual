@@ -10,12 +10,12 @@ class RepoWorker
 
   @@client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info', :pool_size => 10)
 
-  def perform(step, repo_username, repo_name, gem_name, channel)
+  def perform(step, repo_username, repo_name, gem_name, channel, config)
     @gems = @@client[:gems]
-    @github = Repos::GithubData.new(repo_username, repo_name)
+    @github = Repos::GithubData.new(repo_username, repo_name, config['github_token'], config['github_password'], config['github_account'], config['user_agent'])
     @rubygems = Repos::RubyGemsData.new(gem_name)
-    @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)
-    @stackoverflow = Repos::StackOverflow.new(gem_name)
+    @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name, config['user_agent'])
+    @stackoverflow = Repos::StackOverflow.new(gem_name, config['stackoverflow_token'])
     send("fetch_and_save_#{step}", repo_username, repo_name, gem_name)
 
     publish(channel, step)
