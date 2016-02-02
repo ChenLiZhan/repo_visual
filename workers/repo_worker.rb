@@ -2,15 +2,16 @@ require 'sidekiq'
 require 'redis'
 require 'mongo'
 require 'httparty'
-# require_relative '../lib/repo_miner/lib/repos.rb'
 require 'repocrawler'
 
 class RepoWorker
   include Sidekiq::Worker
+  sidekiq_options :retry => 0 # no retry and then to the Dead Job Queue
+
+  @@client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info', :pool_size => 10)
 
   def perform(step, repo_username, repo_name, gem_name, channel)
-    client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
-    @gems = client[:gems]
+    @gems = @@client[:gems]
     @github = Repos::GithubData.new(repo_username, repo_name)
     @rubygems = Repos::RubyGemsData.new(gem_name)
     @ruby_toolbox = Repos::RubyToolBoxData.new(gem_name)

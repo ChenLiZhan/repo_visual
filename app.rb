@@ -10,6 +10,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'sidekiq'
 require 'digest/sha1'
+require 'gems'
 
 require_relative './helpers/helper.rb'
 require_relative './workers/repo_worker.rb'
@@ -22,7 +23,7 @@ class VizApp < Sinatra::Base
   # Faye::WebSocket.load_adapter('puma')
 
   set :server, 'puma'
-  client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info')
+  client = Mongo::Client.new([ '127.0.0.1:27017' ], :database => 'gems_info', :min_pool_size => 35)
   HOST_API = 'http://localhost:4567/api/v1'
 
   before '/gems' do
@@ -61,6 +62,39 @@ class VizApp < Sinatra::Base
     @channel = Digest::SHA1.hexdigest(headers.to_s)
 
     erb :collect
+  end
+
+  post '/list_digging' do
+    channel = params[:channel]
+
+    all_gems = []
+    File.open(File.dirname(__FILE__) + '/public/files/gem_list.txt', 'r').each_line do |line|
+      new_line = line.gsub(/\n/, '')
+      all_gems << new_line
+    end
+
+    prepared_gems = all_gems.take(100)
+
+    prepared_gems.each do |gem_info|
+      repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
+      puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
+      RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('contributors', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('commits', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('forks', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('stars', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('issues', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel)
+      RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel)
+    end
   end
 
   post '/dig' do
