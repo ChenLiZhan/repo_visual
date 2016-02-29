@@ -69,7 +69,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     redis (3.2.2)
-    repocrawler (0.1.11)
+    repocrawler (0.1.12)
       gems
       github_api
       httparty
