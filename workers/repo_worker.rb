@@ -54,6 +54,13 @@ class RepoWorker
                 .find_one_and_update("$set" => {"contributors" => contributors})
   end
 
+  def fetch_and_save_commit_history(repo_username, repo_name, gem_name)
+    commit_history = @github.get_commits_history
+    document = @gems
+                .find('name' => gem_name)
+                .find_one_and_update("$set" => {"commit_history" => commit_history})
+  end
+
   def fetch_and_save_commits(repo_username, repo_name, gem_name)
     commits = @github.get_total_commits
     document = @gems
