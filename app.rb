@@ -73,7 +73,7 @@ class VizApp < Sinatra::Base
       all_gems << new_line
     end
 
-    prepared_gems = all_gems.take(100)
+    prepared_gem_groups = all_gems.take(1200).uniq.each_slice(120).to_a
 
     config = {
       'github_token' => ENV['github_token'],
@@ -83,26 +83,30 @@ class VizApp < Sinatra::Base
       'stackoverflow_token' => ENV['stackoverflow_token'],
       'current_authority' => request.url.gsub(request.fullpath , '')
     }
-    prepared_gems.each do |gem_info|
-      repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
-      puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
-      RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('contributors', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('commits', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('forks', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('stars', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('issues', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel, config)
-      RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel, config)
+
+    prepared_gem_groups.each_with_index do |group, index|
+      puts "---- Start processing Group #{index + 1} ----"
+      group.each do |gem_info|
+        repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
+        puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
+        RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'last_year_commit_activity', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'contributors', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'commits', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'commit_history', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'forks', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'stars', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'issues', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'issues_info', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'last_commit', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_in(3300 * index, 'readme_word_count', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel, config)
+      end
     end
   end
 
@@ -121,16 +125,16 @@ class VizApp < Sinatra::Base
       'current_authority' => request.url.gsub(request.fullpath , '')
     }
     RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'contributors', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'commits', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'commit_history', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'forks', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'stars', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'issues', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'issues_info', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'last_commit', repo_username, repo_name, gem_name, channel, config)
+    sk_perform(rate_limit_res(config['github_token']), 'readme_word_count', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)

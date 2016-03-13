@@ -1,3 +1,5 @@
+require 'httparty'
+
 module VizHelper
 
   def question_word_count(data)
@@ -418,5 +420,18 @@ module VizHelper
     end
 
     [repo_user, repo_name]
+  end
+
+  def rate_limit_res(access_token)
+    rate_limit = HTTParty.get("https://api.github.com/rate_limit?access_token=#{access_token}")
+    rate_limit
+  end
+
+  def sk_perform(rate_limit_res, task, repo_username, repo_name, gem_info, channel, config)
+    if rate_limit_res['rate']['remaining'] <= 200
+      RepoWorker.perform_at(rate_limit_res['rate']['reset'], task, repo_username, repo_name, gem_info, channel, config)
+    else
+      RepoWorker.perform_async(task, repo_username, repo_name, gem_info, channel, config)
+    end
   end
 end
