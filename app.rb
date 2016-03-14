@@ -256,7 +256,7 @@ class VizApp < Sinatra::Base
 
       get '/commit_week_day' do
         content_type :json
-        commit_week_day(@doc['commit_activity_last_year']).to_json
+        commit_week_day(@doc['commit_history']).to_json
       end
 
       get '/commits_month_day' do

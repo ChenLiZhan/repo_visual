@@ -215,13 +215,24 @@ module VizHelper
       'Sunday'    => 0
     }
     data.each do |row|
-      commit_week_day['Sunday'] += row['days'][0]
-      commit_week_day['Monday'] += row['days'][1]
-      commit_week_day['Tuesday'] += row['days'][2]
-      commit_week_day['Wednesday'] += row['days'][3]
-      commit_week_day['Thursday'] += row['days'][4]
-      commit_week_day['Friday'] += row['days'][5]
-      commit_week_day['Saturday'] += row['days'][6]
+      wday = DateTime.parse(row['created_at']).to_date.wday
+
+      case wday
+        when 0
+          commit_week_day['Sunday'] += 1
+        when 1
+          commit_week_day['Monday'] += 1
+        when 2
+          commit_week_day['Tuesday'] += 1
+        when 3
+          commit_week_day['Wednesday'] += 1
+        when 4
+          commit_week_day['Thursday'] += 1
+        when 5
+          commit_week_day['Friday'] += 1
+        when 6
+          commit_week_day['Saturday'] += 1
+      end
     end
 
     commit_week_day
