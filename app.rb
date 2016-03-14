@@ -157,7 +157,7 @@ class VizApp < Sinatra::Base
     end
 
     if searched_gem_id === ''
-      erb 'the gem not exist or is not collected yet'
+      erb 'the gem is not exist or collected yet'
     else
       redirect to("/dashboard/#{searched_gem_id}")
     end
