@@ -24,7 +24,7 @@ class VizApp < Sinatra::Base
 
   set :server, 'puma'
   client = Mongo::Client.new(ENV['mongodb_uri'], :max_pool_size => 10)
-  HOST_API = 'http://localhost:4567/api/v1'
+  HOST_API = "http://#{ENV['host']}/api/v1"
 
   before '/gems' do
     gem_list = []
