@@ -28,7 +28,7 @@ class VizApp < Sinatra::Base
 
   before '/gems' do
     gem_list = []
-    client[:gems].find.each do |document|
+    client[:gems].find.take(50).each do |document|
       gem_list << {
         '_id'         => document['_id'],
         'name'        => document['name'],
