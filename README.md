@@ -13,6 +13,7 @@ It's a web service responsible for collecting gems and presenting the informatio
     * stackoverflow_token
     * mongodb_uri
     * redis_uri
+    * host
 2. run ```bundle install```
 3. run the other required service(MongoDB, Redis, Sidekiq)
     * Mongodb: ```sudo mongod```
