@@ -27,13 +27,16 @@ class VizApp < Sinatra::Base
   HOST_API = 'http://localhost:4567/api/v1'
 
   before '/gems' do
-    documents = []
+    gem_list = []
     client[:gems].find.each do |document|
-      documents << document
+      gem_list << {
+        '_id'         => document['_id'],
+        'name'        => document['name'],
+        'created_at'  => document['created_at']
+      }
     end      
 
-    @collection = client['gems']
-    @doc = documents
+    @doc = gem_list
   end
 
   ['/api/v1/*', '/dashboard/:id', '/rubygems/:id', '/github/:id', '/stackoverflow/:id'].each do |path|
@@ -73,7 +76,7 @@ class VizApp < Sinatra::Base
       all_gems << new_line
     end
 
-    prepared_gem_groups = all_gems.take(1200).uniq.each_slice(120).to_a
+    prepared_gem_groups = all_gems.take(300).uniq.each_slice(150).to_a
 
     config = {
       'github_token' => ENV['github_token'],

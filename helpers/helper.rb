@@ -13,6 +13,7 @@ module VizHelper
     end
 
     #scaling for question word cloud
+    return [] if question_title_word_count.empty?
     question_title_word_count = question_title_word_count.reverse
     
     newMax = 10.0
@@ -43,6 +44,7 @@ module VizHelper
     end
 
     #scaling for word cloud
+    return [] if readme_word_count.empty?
     readme_word_count = readme_word_count.reverse
     
     newMax = 10.0
@@ -201,6 +203,8 @@ module VizHelper
   end
 
   def commit_week_day(data)
+    return {} if data.empty?
+
     commit_week_day = {
       'Monday'    => 0,
       'Tuesday'   => 0,
@@ -267,6 +271,8 @@ module VizHelper
     # cwday
     # month
 
+    return {} if data.empty?
+
     min_date = Date.strptime(data.first['week'].to_s, '%s').to_s
     max_date = Date.strptime((data.last['week'] + 86400 * 6).to_s, '%s').to_s
 
@@ -307,6 +313,7 @@ module VizHelper
   end
 
   def commits_trend(data)
+    return {} if data.empty?
     commits_days = [] 
     data.each do |row|
       row['days'].each_with_index do |value, index|
