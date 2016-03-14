@@ -14,11 +14,19 @@
 </head>
 <body>
   <div class="container">
+    <h2><%= @total_count %> gems are recorded so far!</h2>
+    <form class="form-inline" action="/search" method="POST">
+      <div class="form-group">
+        <label for="search-gem">Go to </label>
+        <input type="text" class="form-control" id="search-gem" name="search_gem" placeholder="please type a gem">
+      </div>
+      <button type="submit" class="btn btn-primary">Go</button>
+    </form>
     <div class="table-responsive">
       <table class="table table-striped">
         <tr>
           <th>Gem</th>
-          <th>Created time</th>
+          <th>Data gathered at</th>
         </tr>
         <% @doc.each do |document| %>
           <tr>

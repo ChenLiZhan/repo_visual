@@ -28,7 +28,10 @@ class VizApp < Sinatra::Base
 
   before '/gems' do
     gem_list = []
-    client[:gems].find.take(50).each do |document|
+
+    all_gem_list = client[:gems].find
+
+    all_gem_list.take(50).each do |document|
       gem_list << {
         '_id'         => document['_id'],
         'name'        => document['name'],
@@ -37,6 +40,7 @@ class VizApp < Sinatra::Base
     end      
 
     @doc = gem_list
+    @total_count = all_gem_list.count
   end
 
   ['/api/v1/*', '/dashboard/:id', '/rubygems/:id', '/github/:id', '/stackoverflow/:id'].each do |path|
@@ -144,6 +148,19 @@ class VizApp < Sinatra::Base
     RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
+  end
+
+  post '/search' do
+    searched_gem_id = ''
+    client[:gems].find('name' => params[:search_gem]).each do |doc|
+      searched_gem_id = doc['_id']
+    end
+
+    if searched_gem_id === ''
+      erb 'the gem not exist or is not collected yet'
+    else
+      redirect to("/dashboard/#{searched_gem_id}")
+    end
   end
 
   get '/stackoverflow/:id' do
