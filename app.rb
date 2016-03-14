@@ -229,7 +229,7 @@ class VizApp < Sinatra::Base
 
       get '/version_downloads_days_aggregate' do
         content_type :json
-        version_downloads_days_aggregate(@doc['version_downloads_days']).to_json
+        version_downloads_days_aggregate(@doc['version_downloads_days'], @doc['created_at']).to_json
       end
 
       get '/version_downloads_stack' do

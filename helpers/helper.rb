@@ -251,7 +251,7 @@ module VizHelper
     version_downloads_days
   end
 
-  def version_downloads_days_aggregate(data)
+  def version_downloads_days_aggregate(data, created_date)
     version_downloads_days_aggregate = {}
     data.each do |row|
       major, minor, patch = row['number'].split('.')
@@ -261,9 +261,17 @@ module VizHelper
     data.each do |row|
       major, minor, patch = row['number'].split('.')
       row['downloads_date'].each_pair do |date, downloads|
-        date = date.split('-')
-        version_downloads_days_aggregate["#{major}.#{minor}"][Date.new(date[0].to_i, date[1].to_i, date[2].to_i).to_time.to_i * 1000] += downloads
+        version_downloads_days_aggregate["#{major}.#{minor}"][Date.parse(date)] += downloads
       end
+    end
+
+    # fill the missing date with 0 downloads
+    version_downloads_days_aggregate.each_pair do |key, value|
+      start_date, end_date = value.keys.first, DateTime.parse(created_date.to_s).to_date
+      date_range = (start_date..end_date).map { |element| [element, 0] }.to_h
+      version_downloads_days_aggregate[key] = date_range.merge(value).to_a.map do |ary|
+        [ary[0].to_time.to_i * 1000, ary[1]]
+      end.sort.to_h
     end
 
     result = []
