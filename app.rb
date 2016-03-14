@@ -266,7 +266,7 @@ class VizApp < Sinatra::Base
 
       get '/commits_trend' do
         content_type :json
-        commits_trend(@doc['commit_activity_last_year']).to_json
+        commits_trend(@doc['commit_history']).to_json
       end
 
       get '/readme_word_count' do

@@ -314,14 +314,14 @@ module VizHelper
 
   def commits_trend(data)
     return {} if data.empty?
-    commits_days = [] 
+    commits_days = Hash.new(0)
+
     data.each do |row|
-      row['days'].each_with_index do |value, index|
-        commits_days << [(row['week'] + 86400 * index) * 1000, value]
-      end
+      timestamp = DateTime.parse(row['created_at']).to_date.to_time.to_i
+      commits_days[timestamp * 1000] += 1
     end
 
-    commits_days
+    commits_days.to_a
   end
 
   def issues_info(data)
