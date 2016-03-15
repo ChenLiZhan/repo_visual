@@ -19,7 +19,7 @@ GEM
     em-socksify (0.3.1)
       eventmachine (>= 1.0.0.beta.4)
     event_emitter (0.2.5)
-    eventmachine (1.2.0.dev.2)
+    eventmachine (1.2.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     faye (1.1.2)
@@ -69,7 +69,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     redis (3.2.2)
-    repocrawler (0.1.15)
+    repocrawler (0.1.18)
       gems
       github_api
       httparty
