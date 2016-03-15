@@ -278,7 +278,7 @@ class VizApp < Sinatra::Base
 
       get '/commits_month_day' do
         content_type :json
-        commit_heatmap(@doc['commit_activity_last_year']).to_json
+        commit_heatmap(@doc['commit_history']).to_json
       end
 
       get '/commits_trend' do

@@ -286,15 +286,10 @@ module VizHelper
   end
 
   def commit_heatmap(data)
-    # p data
-    # cwday
-    # month
-
     return {} if data.empty?
 
-    min_date = Date.strptime(data.first['week'].to_s, '%s').to_s
-    max_date = Date.strptime((data.last['week'] + 86400 * 6).to_s, '%s').to_s
-
+    min_date = DateTime.parse(data.first['created_at']).to_date.to_s
+    max_date = DateTime.parse(data.last['created_at']).to_date.to_s
 
     commits_transform = {
       'data'  => [],
@@ -303,29 +298,22 @@ module VizHelper
       'max_date' => max_date
     }
 
-    date_index = 0
-    data.each do |row|
-      stamp = row['week']
-      counter = 0
-      row['days'].each_with_index do |value, index|
-        commits_transform['max'] = value if value > commits_transform['max']
+    commits_trend = commits_trend(data)
 
-        date = Date.strptime((row['week'] + 86400 * counter).to_s,'%s')
-        
-        commits_transform['data'] << [date.month - 1, date.cwday % 7, value]
-        counter += 1
-        date_index += 1
-      end
+    commits_trend = commits_trend.map do |day|
+      date = DateTime.strptime(day[0].to_s, '%s').to_date
+      ["#{date.mon}-#{date.wday}", day[1]]
     end
 
-    commits_aggregate = Hash.new(0)
-    commits_transform['data'].each do |row|
-      commits_aggregate["#{row[0]}-#{row[1]}"] += row[2]
+    result = Hash.new(0)
+    commits_trend.each do |element|
+      result[element[0]] += element[1]
     end
 
-    commits_transform['data'] = commits_aggregate.map do |row|
-      month, day = row[0].split('-')
-      [month.to_i, day.to_i, row[1]]
+    result.to_a.each do |element|
+      mon, wday = element[0].split('-')
+      commits_transform['max'] = element[1] if element[1] > commits_transform['max']
+      commits_transform['data'] << [mon.to_i, wday.to_i, element[1]]
     end
 
     commits_transform
