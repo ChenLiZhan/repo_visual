@@ -313,7 +313,7 @@ module VizHelper
     result.to_a.each do |element|
       mon, wday = element[0].split('-')
       commits_transform['max'] = element[1] if element[1] > commits_transform['max']
-      commits_transform['data'] << [mon.to_i, wday.to_i, element[1]]
+      commits_transform['data'] << [mon.to_i - 1, wday.to_i, element[1]]
     end
 
     commits_transform
