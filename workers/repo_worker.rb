@@ -42,72 +42,93 @@ class RepoWorker
 
   def fetch_and_save_last_year_commit_activity(repo_username, repo_name, gem_name)
     commit_activity_last_year = @github.get_last_year_commit_activity
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"commit_activity_last_year" => commit_activity_last_year})
+
+    if !commit_activity_last_year.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"commit_activity_last_year" => commit_activity_last_year})
+    end
   end
 
   def fetch_and_save_contributors(repo_username, repo_name, gem_name)
     contributors = @github.get_contributors
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"contributors" => contributors})
+    if !contributors.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"contributors" => contributors})
+    end
   end
 
   def fetch_and_save_commit_history(repo_username, repo_name, gem_name)
     commit_history = @github.get_commits_history
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"commit_history" => commit_history})
+    if !commit_history.empty?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"commit_history" => commit_history})
+    end
   end
 
   def fetch_and_save_commits(repo_username, repo_name, gem_name)
     commits = @github.get_total_commits
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"commits" => commits})
+    if !commits.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"commits" => commits})
+    end
   end
 
   def fetch_and_save_forks(repo_username, repo_name, gem_name)
     forks = @github.get_forks
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"forks" => forks})
+    if !forks.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"forks" => forks})
+    end
   end
 
   def fetch_and_save_stars(repo_username, repo_name, gem_name)
     stars = @github.get_stars
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"stars" => stars})
+    if !stars.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"stars" => stars})
+    end
   end
 
   def fetch_and_save_issues(repo_username, repo_name, gem_name)
     issues = @github.get_issues
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"issues" => issues})
+    if !issues.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"issues" => issues})
+    end
   end
 
   def fetch_and_save_issues_info(repo_username, repo_name, gem_name)
     issues_info = @github.get_issues_info
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"issues_info" => issues_info})
+    if !issues_info.empty?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"issues_info" => issues_info})
+    end
   end
 
   def fetch_and_save_last_commit(repo_username, repo_name, gem_name)
     last_commit = @github.get_last_commits_days
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"last_commit" => last_commit})
+    if !last_commit.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"last_commit" => last_commit})
+    end
   end
 
   def fetch_and_save_readme_word_count(repo_username, repo_name, gem_name)
     readme_word_count = @github.get_readme_word_count
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"readme_word_count" => readme_word_count})
+    if !readme_word_count.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"readme_word_count" => readme_word_count})
+    end
   end
 
   def fetch_and_save_version_downloads(repo_username, repo_name, gem_name)
