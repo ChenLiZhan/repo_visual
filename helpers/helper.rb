@@ -332,6 +332,7 @@ module VizHelper
   end
 
   def issues_info(data)
+    return [] if data.nil?
     data.map! do |row|
       [row['number'], row['duration']]
     end
@@ -340,6 +341,7 @@ module VizHelper
   end
 
   def issues_aggregate(data)
+    return {} if data.nil?
     issues_month_duration = Hash.new()
     data.each do |row|
       datetime = DateTime.iso8601(row['created_at'])
