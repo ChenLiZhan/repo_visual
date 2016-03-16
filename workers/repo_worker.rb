@@ -131,6 +131,15 @@ class RepoWorker
     end
   end
 
+  def fetch_and_save_readme_raw_text(repo_username, repo_name, gem_name)
+    readme_raw_text = @github.get_readme_raw_text
+    if !readme_raw_text.nil?
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"readme_raw_text" => readme_raw_text})
+    end
+  end
+
   def fetch_and_save_version_downloads(repo_username, repo_name, gem_name)
     version_downloads = @rubygems.get_version_downloads
     document = @gems
