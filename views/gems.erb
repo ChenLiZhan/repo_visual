@@ -42,7 +42,15 @@
       </table> 
       
     </div>
-    
+    <ul class="pagination">
+      <% @total_pages.times do |index| %>
+        <% if @page == (index + 1) %>
+          <li class="active"><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
+        <% else %>
+          <li><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
+        <% end %>
+      <% end %>
+    </ul> 
   </div>
 </body>
 </html>

@@ -28,10 +28,11 @@ class VizApp < Sinatra::Base
 
   before '/gems' do
     gem_list = []
+    params[:page].nil? ? @page = 1 : @page = params[:page].to_i
 
     all_gem_list = client[:gems].find({:last_commit => {'$gte' => 0}})
 
-    all_gem_list.take(50).each do |document|
+    all_gem_list.skip((@page - 1) * 50).limit(50).each do |document|
       gem_list << {
         '_id'         => document['_id'],
         'name'        => document['name'],
@@ -41,6 +42,7 @@ class VizApp < Sinatra::Base
 
     @doc = gem_list
     @total_count = all_gem_list.count
+    @total_pages = ((@total_count.to_f) / 50).round
   end
 
   ['/api/v1/*', '/dashboard/:id', '/rubygems/:id', '/github/:id', '/stackoverflow/:id'].each do |path|
