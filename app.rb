@@ -82,7 +82,7 @@ class VizApp < Sinatra::Base
       all_gems << new_line
     end
 
-    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(150).to_a
+    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(200).to_a
 
     config = {
       'github_token' => ENV['github_token'],
