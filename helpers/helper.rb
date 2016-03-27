@@ -1,4 +1,5 @@
 require 'httparty'
+require 'gems'
 
 module VizHelper
 
@@ -395,45 +396,60 @@ module VizHelper
   end
 
   def get_github_repo_info(gem_info)
+    gem_info = Gems.info gem_info
     repo_user = ''
     repo_name = ''
-    seperate_success = false
-    if (!gem_info['homepage_uri'].nil? && !seperate_success)
-      if (gem_info['homepage_uri'].include?('https://github.com') || gem_info['homepage_uri'].include?('http://github.com'))
-        text_ary = gem_info['homepage_uri'].split('/')
-        github_index = text_ary.index('github.com')
-        repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
-        repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
-        seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
+    repo_regex = /https?:\/\/github.com\/([\w-]*)\/([\w-]*)\/?/
+
+    if gem_info 
+      if !gem_info['homepage_uri'].nil? && (match = gem_info['homepage_uri'].match(repo_regex))  
+        repo_user, repo_name = match.captures
+      elsif !gem_info['source_code_uri'].nil? && (match = gem_info['source_code_uri'].match(repo_regex))
+        repo_user, repo_name = match.captures
+      elsif !gem_info['project_uri'].nil? && (match = gem_info['project_uri'].match(repo_regex))
+        repo_user, repo_name = match.captures
+      elsif !gem_info['gem_uri'].nil? && (match = gem_info['gem_uri'].match(repo_regex))
+        repo_user, repo_name = match.captures
       end
+    else
+      puts gem_info
     end
-    if (!gem_info['source_code_uri'].nil? && !seperate_success)
-      if (gem_info['source_code_uri'].include?('https://github.com') || gem_info['source_code_uri'].include?('http://github.com'))
-        text_ary = gem_info['source_code_uri'].split('/')
-        github_index = text_ary.index('github.com')
-        repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
-        repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
-        seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?) 
-      end
-    end
-    if (!gem_info['project_uri'].nil? && !seperate_success)
-      if (gem_info['project_uri'].include?('https://github.com') || gem_info['project_uri'].include?('http://github.com'))
-        text_ary = gem_info['project_uri'].split('/')
-        github_index = text_ary.index('github.com')
-        repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
-        repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
-        seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
-      end
-    end
-    if (!gem_info['gem_uri'].nil? && !seperate_success)
-      if (gem_info['gem_uri'].include?('https://github.com') || gem_info['gem_uri'].include?('http://github.com'))
-        text_ary = gem_info['gem_uri'].split('/')
-        github_index = text_ary.index('github.com')
-        repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
-        repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
-        seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
-      end
-    end
+    # if (!gem_info['homepage_uri'].nil? && !seperate_success)
+    #   if (gem_info['homepage_uri'].include?('https://github.com') || gem_info['homepage_uri'].include?('http://github.com'))
+    #     text_ary = gem_info['homepage_uri'].split('/')
+    #     github_index = text_ary.index('github.com')
+    #     repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
+    #     repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
+    #     seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
+    #   end
+    # end
+    # if (!gem_info['source_code_uri'].nil? && !seperate_success)
+    #   if (gem_info['source_code_uri'].include?('https://github.com') || gem_info['source_code_uri'].include?('http://github.com'))
+    #     text_ary = gem_info['source_code_uri'].split('/')
+    #     github_index = text_ary.index('github.com')
+    #     repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
+    #     repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
+    #     seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?) 
+    #   end
+    # end
+    # if (!gem_info['project_uri'].nil? && !seperate_success)
+    #   if (gem_info['project_uri'].include?('https://github.com') || gem_info['project_uri'].include?('http://github.com'))
+    #     text_ary = gem_info['project_uri'].split('/')
+    #     github_index = text_ary.index('github.com')
+    #     repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
+    #     repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
+    #     seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
+    #   end
+    # end
+    # if (!gem_info['gem_uri'].nil? && !seperate_success)
+    #   if (gem_info['gem_uri'].include?('https://github.com') || gem_info['gem_uri'].include?('http://github.com'))
+    #     text_ary = gem_info['gem_uri'].split('/')
+    #     github_index = text_ary.index('github.com')
+    #     repo_user = text_ary[github_index + 1].nil? ? '' : text_ary[github_index + 1]
+    #     repo_name = text_ary[github_index + 2].nil? ? '' : text_ary[github_index + 2]
+    #     seperate_success = true if (!repo_user.empty? && !repo_user.nil? && !repo_name.empty? && !repo_name.nil?)
+    #   end
+    # end
 
     [repo_user, repo_name]
   end

@@ -82,7 +82,7 @@ class VizApp < Sinatra::Base
       all_gems << new_line
     end
 
-    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(200).to_a
+    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(150).to_a
 
     config = {
       'github_token' => ENV['github_token'],
@@ -96,9 +96,15 @@ class VizApp < Sinatra::Base
     prepared_gem_groups.each_with_index do |group, index|
       puts "---- Start processing Group #{index + 1} ----"
       group.each do |gem_info|
-        repo_username, repo_name = get_github_repo_info(Gems.info gem_info)
+        repo_username, repo_name = get_github_repo_info(gem_info)
         puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
         RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel, config)
         RepoWorker.perform_in(3300 * index, 'last_year_commit_activity', repo_username, repo_name, gem_info, channel, config)
         RepoWorker.perform_in(3300 * index, 'contributors', repo_username, repo_name, gem_info, channel, config)
         RepoWorker.perform_in(3300 * index, 'commits', repo_username, repo_name, gem_info, channel, config)
@@ -110,12 +116,6 @@ class VizApp < Sinatra::Base
         RepoWorker.perform_in(3300 * index, 'last_commit', repo_username, repo_name, gem_info, channel, config)
         RepoWorker.perform_in(3300 * index, 'readme_word_count', repo_username, repo_name, gem_info, channel, config)
         RepoWorker.perform_in(3300 * index, 'readme_raw_text', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel, config)
       end
     end
   end

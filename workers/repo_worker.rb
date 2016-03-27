@@ -41,147 +41,214 @@ class RepoWorker
   end
 
   def fetch_and_save_last_year_commit_activity(repo_username, repo_name, gem_name)
-    commit_activity_last_year = @github.get_last_year_commit_activity
-
-    if !commit_activity_last_year.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"commit_activity_last_year" => commit_activity_last_year})
+    begin
+      commit_activity_last_year = @github.get_last_year_commit_activity
+      if !commit_activity_last_year.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"commit_activity_last_year" => commit_activity_last_year})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_contributors(repo_username, repo_name, gem_name)
-    contributors = @github.get_contributors
-    if !contributors.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"contributors" => contributors})
+    begin
+      contributors = @github.get_contributors
+      if !contributors.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"contributors" => contributors})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_commit_history(repo_username, repo_name, gem_name)
-    commit_history = @github.get_commits_history
-    if !commit_history.empty?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"commit_history" => commit_history})
+    begin
+      commit_history = @github.get_commits_history
+      if !commit_history.empty?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"commit_history" => commit_history})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_commits(repo_username, repo_name, gem_name)
-    commits = @github.get_total_commits
-    if !commits.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"commits" => commits})
+    begin
+      commits = @github.get_total_commits
+      if !commits.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"commits" => commits})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_forks(repo_username, repo_name, gem_name)
-    forks = @github.get_forks
-    if !forks.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"forks" => forks})
+    begin
+      forks = @github.get_forks
+      if !forks.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"forks" => forks})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_stars(repo_username, repo_name, gem_name)
-    stars = @github.get_stars
-    if !stars.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"stars" => stars})
+    begin
+      stars = @github.get_stars
+      if !stars.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"stars" => stars})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_issues(repo_username, repo_name, gem_name)
-    issues = @github.get_issues
-    if !issues.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"issues" => issues})
+    begin
+      issues = @github.get_issues
+      if !issues.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"issues" => issues})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_issues_info(repo_username, repo_name, gem_name)
-    issues_info = @github.get_issues_info
-    if !issues_info.empty?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"issues_info" => issues_info})
+    begin
+      issues_info = @github.get_issues_info
+      if !issues_info.empty?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"issues_info" => issues_info})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_last_commit(repo_username, repo_name, gem_name)
-    last_commit = @github.get_last_commits_days
-    if !last_commit.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"last_commit" => last_commit})
+    begin
+      last_commit = @github.get_last_commits_days
+      if !last_commit.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"last_commit" => last_commit})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_readme_word_count(repo_username, repo_name, gem_name)
-    readme_word_count = @github.get_readme_word_count
-    if !readme_word_count.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"readme_word_count" => readme_word_count})
+    begin
+      readme_word_count = @github.get_readme_word_count
+      if !readme_word_count.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"readme_word_count" => readme_word_count})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_readme_raw_text(repo_username, repo_name, gem_name)
-    readme_raw_text = @github.get_readme_raw_text
-    if !readme_raw_text.nil?
-      document = @gems
-                  .find('name' => gem_name)
-                  .find_one_and_update("$set" => {"readme_raw_text" => readme_raw_text})
+    begin
+      readme_raw_text = @github.get_readme_raw_text
+      if !readme_raw_text.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"readme_raw_text" => readme_raw_text})
+      end
+    rescue => error
+      puts error
     end
   end
 
   def fetch_and_save_version_downloads(repo_username, repo_name, gem_name)
-    version_downloads = @rubygems.get_version_downloads
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"version_downloads" => version_downloads})
+    begin
+      version_downloads = @rubygems.get_version_downloads
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"version_downloads" => version_downloads})
+    rescue => error
+      puts error
+    end
   end
 
   def fetch_and_save_version_downloads_days(repo_username, repo_name, gem_name)
-    version_downloads_days = @rubygems.get_version_downloads_trend
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"version_downloads_days" => version_downloads_days})
+    begin
+      version_downloads_days = @rubygems.get_version_downloads_trend
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"version_downloads_days" => version_downloads_days})
+    rescue => error
+      puts error
+    end
   end
 
   def fetch_and_save_dependencies(repo_username, repo_name, gem_name)
-    dependencies = @rubygems.get_dependencies
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"dependencies" => dependencies})
+    begin
+      dependencies = @rubygems.get_dependencies
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"dependencies" => dependencies})
+    rescue => error
+      puts error
+    end
   end
 
   def fetch_and_save_total_downloads(repo_username, repo_name, gem_name)
-    total_downloads = @rubygems.get_total_downloads
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"total_downloads" => total_downloads})
+    begin
+      total_downloads = @rubygems.get_total_downloads
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"total_downloads" => total_downloads})
+    rescue => error
+      puts error
+    end
   end
 
   def fetch_and_save_ranking(repo_username, repo_name, gem_name)
-    ranking = @ruby_toolbox.get_ranking
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {"ranking" => ranking})
+    begin
+      ranking = @ruby_toolbox.get_ranking
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {"ranking" => ranking})
+    rescue => error
+      puts error
+    end
   end
 
   def fetch_and_save_questions(repo_username, repo_name, gem_name)
-    questions, questions_word_count = @stackoverflow.get_questions
-    document = @gems
-                .find('name' => gem_name)
-                .find_one_and_update("$set" => {
-                    "questions" => questions,
-                    "questions_word_count"  => questions_word_count
-                  })
+    begin
+      questions, questions_word_count = @stackoverflow.get_questions
+      document = @gems
+                  .find('name' => gem_name)
+                  .find_one_and_update("$set" => {
+                      "questions" => questions,
+                      "questions_word_count"  => questions_word_count
+                    })
+    rescue => error
+      puts error
+    end
   end
 end
