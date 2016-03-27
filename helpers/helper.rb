@@ -279,7 +279,8 @@ module VizHelper
     version_downloads_days_aggregate.each_pair do |key, value|
       result << {
         'name'    => key,
-        'data'   => value.to_a
+        'data'    => value.to_a,
+        'type'    => 'area'
       }
     end
 
