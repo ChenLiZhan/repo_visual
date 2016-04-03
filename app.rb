@@ -11,6 +11,7 @@ require 'open-uri'
 require 'sidekiq'
 require 'digest/sha1'
 require 'gems'
+require 'json'
 
 require_relative './helpers/helper.rb'
 require_relative './workers/repo_worker.rb'
@@ -76,13 +77,9 @@ class VizApp < Sinatra::Base
   post '/list_digging' do
     channel = params[:channel]
 
-    all_gems = []
-    File.open(File.dirname(__FILE__) + '/public/files/gem_list.txt', 'r').each_line do |line|
-      new_line = line.gsub(/\n/, '')
-      all_gems << new_line
-    end
+    all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
 
-    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(150).to_a
+    prepared_gem_groups = all_gems.take(1).uniq.each_slice(150).to_a
 
     config = {
       'github_token' => ENV['github_token'],
@@ -96,26 +93,27 @@ class VizApp < Sinatra::Base
     prepared_gem_groups.each_with_index do |group, index|
       puts "---- Start processing Group #{index + 1} ----"
       group.each do |gem_info|
-        repo_username, repo_name = get_github_repo_info(gem_info)
+        # repo_username, repo_name = get_github_repo_info(gem_info)
+        repo_username, repo_name, gem_name = gem_info['repo_user'], gem_info['repo_name'], gem_info['gem_name'][0]
         puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
-        RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('ranking', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_async('questions', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'last_year_commit_activity', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'contributors', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'commits', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'commit_history', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'forks', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'stars', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'issues', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'issues_info', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'last_commit', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'readme_word_count', repo_username, repo_name, gem_info, channel, config)
-        RepoWorker.perform_in(3300 * index, 'readme_raw_text', repo_username, repo_name, gem_info, channel, config)
+        RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'contributors', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'commits', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'commit_history', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'forks', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'stars', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'issues', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'issues_info', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'last_commit', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'readme_word_count', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'readme_raw_text', repo_username, repo_name, gem_name, channel, config)
       end
     end
   end
