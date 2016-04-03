@@ -79,7 +79,7 @@ class VizApp < Sinatra::Base
 
     all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
 
-    prepared_gem_groups = all_gems.take(1).uniq.each_slice(150).to_a
+    prepared_gem_groups = all_gems.take(5000).uniq.each_slice(150).to_a
 
     config = {
       'github_token' => ENV['github_token'],
