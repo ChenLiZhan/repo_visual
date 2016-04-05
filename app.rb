@@ -77,7 +77,8 @@ class VizApp < Sinatra::Base
   post '/list_digging' do
     channel = params[:channel]
 
-    all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
+    all_gems = JSON.parse(HTTParty.get("#{HOST_API}/gems"))
+
 
     prepared_gem_groups = all_gems.take(5000).uniq.each_slice(150).to_a
 
@@ -93,9 +94,8 @@ class VizApp < Sinatra::Base
     prepared_gem_groups.each_with_index do |group, index|
       puts "---- Start processing Group #{index + 1} ----"
       group.each do |gem_info|
-        # repo_username, repo_name = get_github_repo_info(gem_info)
         repo_username, repo_name, gem_name = gem_info['repo_user'], gem_info['repo_name'], gem_info['gem_name'][0]
-        puts "Gem: #{gem_info} #{repo_username}/#{repo_name}"
+        puts "Gem: #{gem_name} #{repo_username}/#{repo_name}"
         RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
         RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
         RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
@@ -217,6 +217,13 @@ class VizApp < Sinatra::Base
   end
 
   namespace '/api/v1' do
+    get '/gems' do
+      content_type :json
+      all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
+
+      all_gems.to_json
+    end
+
     namespace '/rubygems' do
       get '/version_downloads_days_process' do
         content_type :json
