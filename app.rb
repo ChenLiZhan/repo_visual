@@ -77,7 +77,7 @@ class VizApp < Sinatra::Base
   post '/list_digging' do
     channel = params[:channel]
 
-    all_gems = JSON.parse(HTTParty.get("#{HOST_API}/gems"))
+    all_gems = HTTParty.get("#{HOST_API}/gems")
 
 
     prepared_gem_groups = all_gems.take(5000).uniq.each_slice(150).to_a
