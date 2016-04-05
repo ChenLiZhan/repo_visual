@@ -116,6 +116,8 @@ class VizApp < Sinatra::Base
         RepoWorker.perform_in(3300 * index, 'readme_raw_text', repo_username, repo_name, gem_name, channel, config)
       end
     end
+
+    'Gems are all put into redis queue'
   end
 
   post '/dig' do
