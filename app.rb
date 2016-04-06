@@ -80,7 +80,7 @@ class VizApp < Sinatra::Base
     all_gems = HTTParty.get("#{HOST_API}/gems")
 
 
-    prepared_gem_groups = all_gems.take(5000).uniq.each_slice(150).to_a
+    prepared_gem_groups = all_gems.take(5000).uniq.each_slice(120).to_a
 
     config = {
       'github_token' => ENV['github_token'],
