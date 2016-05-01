@@ -66,6 +66,19 @@ class RepoWorker
     end
   end
 
+  def fetch_and_save_test(repo_username, repo_name, gem_name)
+    begin
+      test = @github.get_test
+      if !test.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"has_test" => test})
+      end
+    rescue => error
+      puts error
+    end
+  end
+
   def fetch_and_save_commit_history(repo_username, repo_name, gem_name)
     begin
       commit_history = @github.get_commits_history
@@ -112,6 +125,19 @@ class RepoWorker
         document = @gems
                     .find('name' => gem_name)
                     .find_one_and_update("$set" => {"stars" => stars})
+      end
+    rescue => error
+      puts error
+    end
+  end
+
+  def fetch_and_save_total_issues(repo_username, repo_name, gem_name)
+    begin
+      issues = @github.get_total_issues
+      if !issues.nil?
+        document = @gems
+                    .find('name' => gem_name)
+                    .find_one_and_update("$set" => {"total_issues" => issues})
       end
     rescue => error
       puts error

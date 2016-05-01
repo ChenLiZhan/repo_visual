@@ -80,7 +80,7 @@ class VizApp < Sinatra::Base
     all_gems = HTTParty.get("#{HOST_API}/gems")
 
 
-    prepared_gem_groups = all_gems.take(5000).uniq.each_slice(100).to_a
+    prepared_gem_groups = all_gems.take(1500).uniq.each_slice(100).to_a
 
     config = {
       'github_token' => ENV['github_token'],
@@ -114,6 +114,8 @@ class VizApp < Sinatra::Base
         RepoWorker.perform_in(3300 * index, 'last_commit', repo_username, repo_name, gem_name, channel, config)
         RepoWorker.perform_in(3300 * index, 'readme_word_count', repo_username, repo_name, gem_name, channel, config)
         RepoWorker.perform_in(3300 * index, 'readme_raw_text', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'test', repo_username, repo_name, gem_name, channel, config)
+        RepoWorker.perform_in(3300 * index, 'total_issues', repo_username, repo_name, gem_name, channel, config)
       end
     end
 
@@ -134,24 +136,26 @@ class VizApp < Sinatra::Base
       'stackoverflow_token' => ENV['stackoverflow_token'],
       'current_authority' => request.url.gsub(request.fullpath , '')
     }
-    RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('readme_raw_text', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
-    RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('readme_raw_text', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
+    # RepoWorker.perform_async('test', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('total_issues', repo_username, repo_name, gem_name, channel, config)
   end
 
   post '/search' do

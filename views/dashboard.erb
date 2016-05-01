@@ -447,6 +447,12 @@
 
             //     series: version_downloads_days_aggregate
             // });
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false
+                }
+            });
+
             $('#stacked-downloads').highcharts('StockChart', {
                 rangeSelector: {
                     selected: 0

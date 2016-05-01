@@ -260,11 +260,18 @@ module VizHelper
     end
 
     data.each do |row|
-      major, minor, patch = row['number'].split('.')
-      row['downloads_date'].each_pair do |date, downloads|
-        version_downloads_days_aggregate["#{major}.#{minor}"][Date.parse(date)] += downloads
+      row['downloads_date'] = row['downloads_date'].delete_if do |key, value|
+        Date.parse(key.to_s) > Date.parse(created_date.to_s)
       end
     end
+
+    data.each do |row|
+      major, minor, patch = row['number'].split('.')
+      row['downloads_date'].each_pair do |date, downloads|
+        version_downloads_days_aggregate["#{major}.#{minor}"][Date.parse(date)] += downloads.to_i
+      end
+    end
+
 
     # fill the missing date with 0 downloads
     version_downloads_days_aggregate.each_pair do |key, value|
@@ -290,8 +297,8 @@ module VizHelper
   def commit_heatmap(data)
     return {} if data.empty?
 
-    min_date = DateTime.parse(data.first['created_at']).to_date.to_s
-    max_date = DateTime.parse(data.last['created_at']).to_date.to_s
+    min_date = DateTime.parse(data.first['created_at']).to_time.to_s
+    max_date = DateTime.parse(data.last['created_at']).to_time.to_s
 
     commits_transform = {
       'data'  => [],
@@ -303,7 +310,7 @@ module VizHelper
     commits_trend = commits_trend(data)
 
     commits_trend = commits_trend.map do |day|
-      date = DateTime.strptime(day[0].to_s, '%s').to_date
+      date = DateTime.strptime((day[0] / 1000).to_s, '%s').to_time
       ["#{date.mon}-#{date.wday}", day[1]]
     end
 
