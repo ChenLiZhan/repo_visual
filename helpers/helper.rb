@@ -146,6 +146,8 @@ module VizHelper
     end
 
     minor_hash = Hash.new(0)
+
+    minor_data.compact!
     minor_data.each do |row|
       row.each do |version|
         maj, min, pat = version[0].split('.')
