@@ -293,6 +293,10 @@ module VizHelper
       }
     end
 
+    result.sort_by! do |element|
+      element['name'].to_f
+    end
+
     result
   end
 
