@@ -197,6 +197,7 @@ class VizApp < Sinatra::Base
 
   get '/dashboard/:id' do
     @version_downloads_days_aggregate = version_downloads_days_aggregate(@doc['version_downloads_days'], @doc['created_at'])
+    @version_downloads_days_sum = version_downloads_days_sum(@version_downloads_days_aggregate)
     @version_downloads_nest_drilldown = version_downloads_nest(@doc['version_downloads'])
     @commit_week_day = commit_week_day(@doc['commit_history']).map do |data|
       [data[0], data[1]]

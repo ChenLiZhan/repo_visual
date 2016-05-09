@@ -277,7 +277,6 @@ module VizHelper
       end
     end
 
-
     # fill the missing date with 0 downloads
     version_downloads_days_aggregate.each_pair do |key, value|
       start_date, end_date = value.keys.first, DateTime.parse(created_date.to_s).to_date
@@ -301,6 +300,22 @@ module VizHelper
     end
 
     result
+  end
+
+  def version_downloads_days_sum(data)
+    result = Hash.new(0)
+
+    data.each do |version|
+      version['data'].to_h.each_pair do |key, value|
+        if result[key].nil?
+          result[key] = value
+        else
+          result[key] += value
+        end
+      end
+    end
+
+    result.to_a
   end
 
   def commit_heatmap(data)

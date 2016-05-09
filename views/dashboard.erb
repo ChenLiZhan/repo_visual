@@ -420,6 +420,7 @@
     <script>
         var version_downloads_days_aggregate = <%= @version_downloads_days_aggregate.to_json %> ;
         var version_downloads_nest_drilldown = <%= @version_downloads_nest_drilldown.to_json %> ;
+        var version_downloads_days_sum = <%= @version_downloads_days_sum.to_json %>;
         var commit_week_day = <%= @commit_week_day.to_json %>;
         var question_views = <%= @question_views.to_json %>;
         var commits_month_day = <%= @commits_month_day.to_json %>;
@@ -456,6 +457,11 @@
             $('#stacked-downloads').highcharts('StockChart', {
                 rangeSelector: {
                     selected: 0
+                },
+                navigator: {
+                    series: {
+                        data: version_downloads_days_sum
+                    }
                 },
                 plotOptions: {
                     area: {
