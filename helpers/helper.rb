@@ -348,11 +348,11 @@ module VizHelper
 
   def issues_info(data)
     return [] if data.nil?
-    data.map! do |row|
+    result = data.map do |row|
       [row['number'], row['duration']]
     end
 
-    data
+    result
   end
 
   def issues_aggregate(data)
