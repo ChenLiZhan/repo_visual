@@ -63,6 +63,9 @@ module VizHelper
     end
     readme_word_count_scaled << {"text"=>lastword['text'], "size"=>10}
 
+    readme_word_count_scaled.delete_if do |ele|
+      ele['size'].to_f.nan?
+    end
     readme_word_count_scaled
   end
 
