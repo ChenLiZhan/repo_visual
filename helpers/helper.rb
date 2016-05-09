@@ -372,7 +372,11 @@ module VizHelper
     date_range = (start_date..end_date).map { |element| [element.to_time.to_i * 1000, 0] }.to_h
     result = date_range.merge(commits_days)
 
-    result.to_a
+    result = result.to_a.sort_by do |element|
+      element[0]
+    end
+
+    result
   end
 
   def issues_info(data)
