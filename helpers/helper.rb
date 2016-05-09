@@ -295,9 +295,12 @@ module VizHelper
       }
     end
 
-    result.sort_by! do |element|
-      element['name'].to_f
-    end
+    result.sort! do |a, b|
+      major_a, minor_a = a['name'].split(/\./)
+      major_b, minor_b = b['name'].split(/\./)
+      
+      (major_a.to_i <=> major_b.to_i) === 0 ? (minor_a.to_i <=> minor_b.to_i) : (major_a.to_i <=> major_b.to_i)
+    end.reverse!
 
     result
   end
