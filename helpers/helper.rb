@@ -318,7 +318,9 @@ module VizHelper
       end
     end
 
-    result.to_a
+    result.to_a.sort do |a, b|
+      a[0] <=> b[0]
+    end
   end
 
   def commit_heatmap(data)
