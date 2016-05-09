@@ -202,11 +202,11 @@ class VizApp < Sinatra::Base
     @commit_week_day = commit_week_day(@doc['commit_history']).map do |data|
       [data[0], data[1]]
     end
-    @commits_month_day = commit_heatmap(@doc['commit_history'])
+    @commits_month_day = commit_heatmap(@doc['commit_history'], @doc['created_at'])
     @issues_info = issues_info(@doc['issues_info'])
     @issues_aggregate = issues_aggregate(@doc['issues_info'])
     @readme_word_count = readme_word_count(@doc['readme_word_count'])
-    @commits_trend = commits_trend(@doc['commit_history'])
+    @commits_trend = commits_trend(@doc['commit_history'], @doc['created_at'])
 
     # @version_downloads_days_aggregate = HTTParty.get(HOST_API + "/rubygems/version_downloads_days_aggregate?id=#{params[:id]}")
     # @version_downloads_nest_drilldown = HTTParty.get(HOST_API + "/rubygems/version_downloads_nest?id=#{params[:id]}")

@@ -323,7 +323,7 @@ module VizHelper
     end
   end
 
-  def commit_heatmap(data)
+  def commit_heatmap(data, created_at)
     return {} if data.empty?
 
     min_date = DateTime.parse(data.first['created_at']).to_time.to_s
@@ -336,7 +336,7 @@ module VizHelper
       'max_date' => max_date
     }
 
-    commits_trend = commits_trend(data)
+    commits_trend = commits_trend(data, created_at)
 
     commits_trend = commits_trend.map do |day|
       date = DateTime.strptime((day[0] / 1000).to_s, '%s').to_time
@@ -357,7 +357,7 @@ module VizHelper
     commits_transform
   end
 
-  def commits_trend(data)
+  def commits_trend(data, created_date)
     return {} if data.empty?
     commits_days = Hash.new(0)
 
@@ -366,7 +366,13 @@ module VizHelper
       commits_days[timestamp * 1000] += 1
     end
 
-    commits_days.to_a
+    # fill the missing date with 0 commit
+    result = Hash.new(0)
+    start_date, end_date = DateTime.strptime((commits_days.keys.first / 1000).to_s, '%s'), DateTime.parse(created_date.to_s).to_date
+    date_range = (start_date..end_date).map { |element| [element.to_time.to_i * 1000, 0] }.to_h
+    result = date_range.merge(commits_days)
+
+    result.to_a
   end
 
   def issues_info(data)
