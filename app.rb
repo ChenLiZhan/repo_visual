@@ -159,16 +159,18 @@ class VizApp < Sinatra::Base
   end
 
   post '/search' do
-    searched_gem_id = ''
-    client[:gems].find('name' => params[:search_gem]).each do |doc|
-      searched_gem_id = doc['_id']
-    end
+    # searched_gem_id = ''
+    # client[:gems].find('name' => params[:search_gem]).each do |doc|
+    #   searched_gem_id = doc['_id']
+    # end
 
-    if searched_gem_id === ''
-      erb 'the gem is not exist or collected yet'
-    else
-      redirect to("/dashboard/#{searched_gem_id}")
-    end
+    # if searched_gem_id === ''
+    #   erb 'the gem is not exist or collected yet'
+    # else
+    #   redirect to("/dashboard/#{searched_gem_id}")
+    # end
+
+    redirect to("/gems?search=#{params[:search_gem]}")
   end
 
   get '/stackoverflow/:id' do
@@ -227,6 +229,20 @@ class VizApp < Sinatra::Base
   end
 
   get '/gems' do
+    if !params[:search].nil?
+      @search_gems = []
+      keyword = params[:search]
+      client[:gems].find({'name' => /#{keyword}/}).each do |doc|
+        @search_gems << doc
+      end
+
+      @isSearching = true
+      if @search_gems.empty?
+        erb 'not found'
+      end
+
+    end
+
     erb :gems
   end
 
@@ -237,7 +253,7 @@ class VizApp < Sinatra::Base
   namespace '/api/v1' do
     get '/gems' do
       content_type :json
-      all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/special_gems.json'))
+      all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
 
       all_gems.to_json
     end

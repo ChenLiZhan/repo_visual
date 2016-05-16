@@ -20,7 +20,7 @@
         <label for="search-gem">Go to </label>
         <input type="text" class="form-control" id="search-gem" name="search_gem" placeholder="please type a gem">
       </div>
-      <button type="submit" class="btn btn-primary">Go</button>
+      <button type="submit" class="btn btn-primary">Search</button>
     </form>
     <div class="table-responsive">
       <table class="table table-striped">
@@ -28,26 +28,41 @@
           <th>Gem</th>
           <th>Data gathered at</th>
         </tr>
-        <% @doc.each do |document| %>
-          <tr>
-            <td>
-              <a role="button" href="/dashboard/<%= document['_id'] %>">
-                <%= document['name'] %>
-              </a>
-            </td>
-            <td><%= document['created_at'] %></td>
-          </tr>
+        <% if !@isSearching %>
+          <% @doc.each do |document| %>
+            <tr>
+              <td>
+                <a role="button" href="/dashboard/<%= document['_id'] %>">
+                  <%= document['name'] %>
+                </a>
+              </td>
+              <td><%= document['created_at'] %></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <% @search_gems.each do |document| %>
+            <tr>
+              <td>
+                <a role="button" href="/dashboard/<%= document['_id'] %>">
+                  <%= document['name'] %>
+                </a>
+              </td>
+              <td><%= document['created_at'] %></td>
+            </tr>
+          <% end %>
         <% end %>
 
       </table> 
       
     </div>
     <ul class="pagination">
-      <% @total_pages.times do |index| %>
-        <% if @page == (index + 1) %>
-          <li class="active"><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
-        <% else %>
-          <li><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
+      <% if !@isSearching %>
+        <% @total_pages.times do |index| %>
+          <% if @page == (index + 1) %>
+            <li class="active"><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
+          <% else %>
+            <li><a href="/gems?page=<%= index + 1 %>"><%= index + 1 %></a></li>
+          <% end %>
         <% end %>
       <% end %>
     </ul> 
