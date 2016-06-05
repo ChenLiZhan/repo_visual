@@ -77,9 +77,10 @@ class VizApp < Sinatra::Base
   post '/list_digging' do
     channel = params[:channel]
 
-    all_gems = HTTParty.get("#{HOST_API}/gems")
+    # all_gems = HTTParty.get("#{HOST_API}/gems")
 
 
+    all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/working.json'))
     prepared_gem_groups = all_gems.take(1500).uniq.each_slice(100).to_a
 
     config = {
@@ -136,25 +137,25 @@ class VizApp < Sinatra::Base
       'stackoverflow_token' => ENV['stackoverflow_token'],
       'current_authority' => request.url.gsub(request.fullpath , '')
     }
-    # RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('readme_raw_text', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
-    # RepoWorker.perform_async('test', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('basic_information', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('last_year_commit_activity', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('contributors', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('commits', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('commit_history', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('forks', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('stars', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('issues', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('issues_info', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('last_commit', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('readme_word_count', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('readme_raw_text', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('version_downloads', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('version_downloads_days', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('dependencies', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('total_downloads', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('ranking', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('questions', repo_username, repo_name, gem_name, channel, config)
+    RepoWorker.perform_async('test', repo_username, repo_name, gem_name, channel, config)
     RepoWorker.perform_async('total_issues', repo_username, repo_name, gem_name, channel, config)
   end
 
@@ -253,7 +254,7 @@ class VizApp < Sinatra::Base
   namespace '/api/v1' do
     get '/gems' do
       content_type :json
-      all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/gems-81460.json'))
+      all_gems = JSON.parse(File.read(File.dirname(__FILE__) + '/public/files/working.json'))
 
       all_gems.to_json
     end

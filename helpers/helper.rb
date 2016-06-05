@@ -258,6 +258,7 @@ module VizHelper
   end
 
   def version_downloads_days_aggregate(data, created_date)
+    Date.parse(created_date.to_s) > Date.parse(data[0]['downloads_date'].keys.last) ? last_date = data[0]['downloads_date'].keys.last : last_date = created_date
     version_downloads_days_aggregate = {}
     data.each do |row|
       major, minor, patch = row['number'].split('.')
@@ -266,7 +267,7 @@ module VizHelper
 
     data.each do |row|
       row['downloads_date'] = row['downloads_date'].delete_if do |key, value|
-        Date.parse(key.to_s) > Date.parse(created_date.to_s)
+        Date.parse(key.to_s) > Date.parse(last_date.to_s)
       end
     end
 
@@ -279,7 +280,7 @@ module VizHelper
 
     # fill the missing date with 0 downloads
     version_downloads_days_aggregate.each_pair do |key, value|
-      start_date, end_date = value.keys.first, DateTime.parse(created_date.to_s).to_date
+      start_date, end_date = value.keys.first, DateTime.parse(last_date.to_s).to_date
       date_range = (start_date..end_date).map { |element| [element, 0] }.to_h
       version_downloads_days_aggregate[key] = date_range.merge(value).to_a.map do |ary|
         [ary[0].to_time.to_i * 1000, ary[1]]
