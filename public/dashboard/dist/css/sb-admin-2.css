@@ -339,6 +339,20 @@ table.dataTable thead .sorting:after {
     color: #0A94C2;
 }
 
+.panel-health .panel-heading {
+    border-color: #ef4d4d;
+    color: #fff;
+    background-color: #ef4d4d;
+}
+
+.panel-health a {
+    color: #ef4d4d;
+}
+
+.panel-health a:hover {
+    color: #0A94C2;
+}
+
 .panel-ree {
     border-color: #b33b00;
 }
